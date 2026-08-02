@@ -1,0 +1,260 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  photos: ImageMetadata[];
+  label: string;
+  /** Unique per instance so several carousels can share a page. */
+  id: string;
+}
+const { photos, label, id } = Astro.props;
+const multiple = photos.length > 1;
+---
+
+<!-- Native scroll-snap does the scrolling; the buttons and dots only nudge it.
+     That keeps touch swiping, trackpads and keyboards all working without a
+     carousel library, and it degrades to a plain scrollable strip with no JS. -->
+<div class="carousel" data-carousel={id}>
+  <div class="carousel__track" data-track role="group" aria-roledescription="carousel" aria-label={label}>
+    {
+      photos.map((photo, i) => (
+        <figure class="carousel__slide" data-slide aria-label={`${i + 1} / ${photos.length}`}>
+          <Image
+            src={photo}
+            alt={`${label} — ${i + 1}`}
+            widths={[480, 720, 1000]}
+            sizes="(max-width: 860px) 100vw, 48vw"
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        </figure>
+      ))
+    }
+  </div>
+
+  {
+    multiple && (
+      <>
+        <button type="button" class="carousel__nav carousel__nav--prev" data-prev aria-label="←">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <button type="button" class="carousel__nav carousel__nav--next" data-next aria-label="→">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <div class="carousel__dots" data-dots>
+          {photos.map((_, i) => <button type="button" class="carousel__dot" data-dot={i} aria-label={`${i + 1}`} />)}
+        </div>
+
+        <p class="carousel__count" data-count aria-hidden="true">1 / {photos.length}</p>
+      </>
+    )
+  }
+</div>
+
+<style>
+  .carousel {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .carousel__track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-behavior: smooth;
+  }
+  .carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel__slide {
+    flex: 0 0 100%;
+    margin: 0;
+    scroll-snap-align: start;
+  }
+
+  .carousel__slide img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Controls stay hidden until the carousel is hovered or focused, so at rest
+     the photograph is uninterrupted. On touch they are always visible. */
+  .carousel__nav {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--color-forest-950) 62%, transparent);
+    backdrop-filter: blur(6px);
+    color: var(--color-cream);
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity 0.4s var(--ease-out-quart),
+      background-color 0.3s var(--ease-out-quart);
+  }
+
+  .carousel__nav svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .carousel__nav--prev {
+    left: 0.75rem;
+  }
+  .carousel__nav--next {
+    right: 0.75rem;
+  }
+
+  .carousel:hover .carousel__nav,
+  .carousel:focus-within .carousel__nav {
+    opacity: 1;
+  }
+
+  .carousel__nav:hover {
+    background: var(--color-gold-500);
+    color: var(--color-forest-950);
+  }
+
+  @media (hover: none) {
+    .carousel__nav {
+      opacity: 1;
+    }
+  }
+
+  .carousel__dots {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0.85rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .carousel__dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--color-cream) 45%, transparent);
+    cursor: pointer;
+    transition:
+      background-color 0.35s var(--ease-out-quart),
+      width 0.35s var(--ease-out-expo);
+  }
+
+  .carousel__dot[aria-current='true'] {
+    width: 1.35rem;
+    border-radius: 999px;
+    background: var(--color-gold-500);
+  }
+
+  .carousel__count {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.9rem;
+    padding: 0.24rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-forest-950) 58%, transparent);
+    backdrop-filter: blur(6px);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--color-cream);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel__track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    if (!track) return;
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dot]'));
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-next]');
+    const count = root.querySelector<HTMLElement>('[data-count]');
+    if (slides.length < 2) return;
+
+    let index = 0;
+
+    const render = () => {
+      dots.forEach((d, i) => d.setAttribute('aria-current', String(i === index)));
+      if (count) count.textContent = `${index + 1} / ${slides.length}`;
+      // Hide the arrow that would do nothing rather than leaving a dead button.
+      // No disabled state: the arrows wrap, so both are always live.
+    };
+
+    const go = (i: number) => {
+      // Wrap: past the last photo comes the first, and vice versa.
+      const n = slides.length;
+      index = ((i % n) + n) % n;
+      track.scrollTo({ left: slides[index].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+      render();
+    };
+
+    prev?.addEventListener('click', () => go(index - 1));
+    next?.addEventListener('click', () => go(index + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+
+    // Keep the dots in step when the user swipes or scrolls the strip directly.
+    let raf = 0;
+    track.addEventListener(
+      'scroll',
+      () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const nearest = slides.reduce(
+            (best, slide, i) => {
+              const delta = Math.abs(slide.offsetLeft - track.offsetLeft - track.scrollLeft);
+              return delta < best.delta ? { delta, i } : best;
+            },
+            { delta: Infinity, i: 0 },
+          );
+          if (nearest.i !== index) {
+            index = nearest.i;
+            render();
+          }
+        });
+      },
+      { passive: true },
+    );
+
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(index - 1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(index + 1);
+      }
+    });
+    track.tabIndex = 0;
+
+    render();
+  });
+</script>

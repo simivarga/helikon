@@ -1,0 +1,162 @@
+---
+import Stars from './Stars.astro';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const year = 2026;
+
+const explore = [
+  { key: 'nav.rooms', href: '#rooms' },
+  { key: 'nav.pool', href: '#pool' },
+  { key: 'nav.restaurant', href: '#restaurant' },
+  { key: 'nav.wellness', href: '#wellness' },
+  { key: 'nav.events', href: '#events' },
+  { key: 'nav.contact', href: '#contact' },
+];
+
+const socials = [
+  { label: 'Instagram', href: FACTS.instagram },
+  { label: 'Facebook', href: FACTS.facebook },
+  { label: 'Telegram', href: FACTS.telegram },
+];
+---
+
+<footer class="site-footer">
+  <div class="gutter footer__top">
+    <div class="footer__brand">
+      <span class="footer__name">Helikon</span>
+      <span class="footer__est">
+        <Stars class="text-gold-500 text-[0.6rem]" />
+        <span>Est. {FACTS.established}</span>
+      </span>
+      <p class="footer__tagline">{t('footer.tagline')}</p>
+    </div>
+
+    <nav class="footer__col" aria-label={t('footer.explore')}>
+      <h2>{t('footer.explore')}</h2>
+      {explore.map((item) => <a href={item.href}>{t(item.key)}</a>)}
+    </nav>
+
+    <div class="footer__col">
+      <h2>{t('footer.contactCol')}</h2>
+      <a href={`tel:${FACTS.phone}`}>{FACTS.phoneDisplay}</a>
+      <a href={`tel:${FACTS.phoneEvents}`}>{FACTS.phoneEventsDisplay}</a>
+      <a href={`mailto:${FACTS.email}`}>{FACTS.email}</a>
+      <p>{t('contact.addressValue')}</p>
+      <p>{t('contact.hoursValue')}</p>
+    </div>
+
+    <div class="footer__col">
+      <h2>{t('footer.followCol')}</h2>
+      {socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
+      <h2 class="footer__col-second">{t('footer.bookCol')}</h2>
+      <a href={FACTS.booking} target="_blank" rel="noopener" class="footer__booking">{t('footer.bookingLink')}</a>
+    </div>
+  </div>
+
+  <div class="gutter footer__bottom">
+    <span>© {year} Hotel Helikon. {t('footer.rights')}</span>
+    <span>{t('site.tagline')}</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-forest-950);
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-700) 26%, transparent);
+    padding-block: clamp(3.5rem, 7vw, 5.5rem) 2rem;
+  }
+
+  .footer__top {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 720px) {
+    .footer__top {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer__top {
+      grid-template-columns: 1.4fr 0.8fr 1.1fr 0.9fr;
+    }
+  }
+
+  .footer__name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-cream);
+  }
+
+  .footer__est {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.56rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .footer__tagline {
+    margin-top: 1.1rem;
+    max-width: 30ch;
+    font-size: 0.92rem;
+    color: var(--color-cream-muted);
+  }
+
+  .footer__col {
+    display: grid;
+    align-content: start;
+    gap: 0.55rem;
+  }
+
+  .footer__col h2 {
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+    margin-bottom: 0.35rem;
+  }
+
+  .footer__col-second {
+    margin-top: 1.4rem;
+  }
+
+  .footer__col a,
+  .footer__col p {
+    font-size: 0.92rem;
+    color: var(--color-cream-muted);
+    transition: color 0.3s var(--ease-out-quart);
+  }
+
+  .footer__col a:hover {
+    color: var(--color-cream);
+  }
+
+  .footer__booking {
+    color: var(--color-gold-500) !important;
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.6rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-cream) 10%, transparent);
+    font-size: 0.78rem;
+    color: color-mix(in oklab, var(--color-cream-muted) 80%, transparent);
+  }
+</style>

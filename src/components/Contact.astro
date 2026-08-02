@@ -1,0 +1,256 @@
+---
+import { Image } from 'astro:assets';
+import exterior from '../assets/photos/exterior.jpg';
+import SectionHead from './SectionHead.astro';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<section id="contact" class="contact grain">
+  <div class="contact__bg">
+    <Image src={exterior} alt="" widths={[900, 1280]} sizes="100vw" loading="lazy" class="contact__bg-img" data-parallax="0.04" />
+  </div>
+
+  <div class="gutter contact__grid" data-reveal-group>
+    <div>
+      <SectionHead eyebrow={t('contact.eyebrow')} title={t('contact.title')} />
+
+      <dl class="contact__details">
+        <div data-reveal>
+          <dt>{t('contact.address')}</dt>
+          <dd>{t('contact.addressValue')}</dd>
+        </div>
+        <div data-reveal>
+          <dt>{t('contact.hours')}</dt>
+          <dd>{t('contact.hoursValue')}</dd>
+        </div>
+        <div data-reveal>
+          <dt>{t('contact.checkin')}</dt>
+          <dd>{`${FACTS.checkIn} / ${FACTS.checkOut}`}</dd>
+        </div>
+        <div data-reveal>
+          <dt>{t('contact.reception')}</dt>
+          <dd><a href={`tel:${FACTS.phone}`}>{FACTS.phoneDisplay}</a></dd>
+        </div>
+        <div data-reveal>
+          <dt>{t('contact.events')}</dt>
+          <dd><a href={`tel:${FACTS.phoneEvents}`}>{FACTS.phoneEventsDisplay}</a></dd>
+        </div>
+        <div data-reveal>
+          <dt>{t('contact.email')}</dt>
+          <dd><a href={`mailto:${FACTS.email}`}>{FACTS.email}</a></dd>
+        </div>
+      </dl>
+
+      <div class="contact__actions" data-reveal>
+        <a href={`tel:${FACTS.phone}`} class="btn btn-gold">{t('contact.callCta')}</a>
+        <a href={FACTS.whatsapp} target="_blank" rel="noopener" class="btn btn-outline">WhatsApp</a>
+        <a href={FACTS.viber} class="btn btn-outline">Viber</a>
+      </div>
+    </div>
+
+    <!-- A drawn location panel rather than an embedded map: third-party map
+         iframes are consent-gated and frequently render as an empty box, and
+         the contour drawing carries the brand better than a grey tile. -->
+    <div class="location" data-reveal>
+      <svg class="location__contours" viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M-20 55 C80 25 140 85 220 55 S360 15 440 65" />
+          <path d="M-20 105 C70 75 150 135 230 105 S370 65 440 115" />
+          <path d="M-20 155 C90 125 150 185 240 155 S360 115 440 165" />
+          <path d="M-20 205 C80 175 160 235 250 205 S370 165 440 215" />
+          <path d="M-20 255 C90 225 150 285 240 255 S360 215 440 265" />
+          <circle cx="206" cy="150" r="30" />
+          <circle cx="206" cy="150" r="56" />
+          <circle cx="206" cy="150" r="84" />
+        </g>
+      </svg>
+
+      <div class="location__body">
+        <span class="location__pin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M12 22s-7-6.8-7-12a7 7 0 0 1 14 0c0 5.2-7 12-7 12Z" />
+            <circle cx="12" cy="10" r="2.6" />
+          </svg>
+        </span>
+        <p class="location__eyebrow">Helikon</p>
+        <h3 class="location__title">{t('hero.eyebrow')}</h3>
+        <p class="location__note">{t('contact.borderNote')}</p>
+        <div class="location__actions">
+          <a href={FACTS.maps} target="_blank" rel="noopener" class="btn btn-gold">{t('contact.mapsCta')}</a>
+          <a href={FACTS.directions} target="_blank" rel="noopener" class="btn btn-outline">{t('contact.directionsCta')}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--color-forest-950);
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  .contact__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .contact__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 62%;
+  }
+
+  .contact::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, oklch(0.16 0.05 139.5 / 0.93) 0%, oklch(0.16 0.05 139.5 / 0.8) 50%, oklch(0.16 0.05 139.5 / 0.95) 100%),
+      linear-gradient(to right, oklch(0.16 0.05 139.5 / 0.5), transparent 75%);
+  }
+
+  .contact__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    }
+  }
+
+  .contact__details {
+    display: grid;
+    gap: 1.5rem 2rem;
+    margin-top: 2.25rem;
+  }
+
+  @media (min-width: 560px) {
+    .contact__details {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .contact__details dt {
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .contact__details dd {
+    margin-top: 0.35rem;
+    font-size: 0.98rem;
+    color: var(--color-cream);
+  }
+
+  .contact__details a {
+    color: var(--color-cream);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-gold-500) 45%, transparent);
+    text-underline-offset: 3px;
+    transition: color 0.3s var(--ease-out-quart);
+  }
+  .contact__details a:hover {
+    color: var(--color-gold-500);
+  }
+
+  .contact__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 2.5rem;
+  }
+
+  /* ---- location panel -------------------------------------------------- */
+
+  .location {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 6px;
+    min-height: 24rem;
+    display: flex;
+    align-items: flex-end;
+    padding: clamp(1.75rem, 3.5vw, 2.75rem);
+    background: radial-gradient(120% 90% at 72% 18%, color-mix(in oklab, var(--color-forest-800) 92%, transparent), color-mix(in oklab, var(--color-forest-950) 96%, transparent));
+    backdrop-filter: blur(8px);
+    border: 1px solid color-mix(in oklab, var(--color-gold-500) 30%, transparent);
+  }
+
+  .location__contours {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    color: var(--color-gold-600);
+    opacity: 0.24;
+  }
+
+  .location__pin {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--color-gold-500);
+    color: var(--color-forest-950);
+    margin-bottom: 1.1rem;
+    box-shadow: 0 8px 24px oklch(0.16 0.05 139.5 / 0.55);
+  }
+
+  .location__pin svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .location__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .location__title {
+    margin-top: 0.4rem;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+  }
+
+  .location__note {
+    margin-top: 0.9rem;
+    max-width: 34ch;
+    font-size: 0.92rem;
+    color: var(--color-cream-muted);
+  }
+
+  .location__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
+  }
+
+  .location__actions .btn {
+    padding: 0.75rem 1.4rem;
+    font-size: 0.84rem;
+  }
+</style>

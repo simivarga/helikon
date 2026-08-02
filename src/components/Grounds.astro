@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import parkBridge from '../assets/photos/park-bridge.jpg';
+import parkPath from '../assets/photos/park-path.jpg';
+import gazebos from '../assets/photos/garden-gazebos.jpg';
+import billiards from '../assets/photos/billiards.jpg';
+import monument from '../assets/photos/park-monument.jpg';
+import restaurantTerrace from '../assets/photos/restaurant-terrace.jpg';
+import SectionHead from './SectionHead.astro';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+// Every source photo here is a 1280×1280 square, so the tiles are square too:
+// the previous mixed row-spans forced hard crops that cut the subjects in half.
+const tiles = [
+  { image: parkBridge, alt: t('grounds.alt.bridge') },
+  { image: parkPath, alt: t('grounds.alt.path') },
+  { image: gazebos, alt: t('grounds.alt.gazebos') },
+  { image: monument, alt: t('grounds.alt.monument') },
+  { image: restaurantTerrace, alt: t('grounds.alt.terrace') },
+  { image: billiards, alt: t('grounds.alt.billiards') },
+];
+---
+
+<section id="grounds" class="grounds section-light">
+  <div class="gutter grounds__head">
+    <SectionHead eyebrow={t('grounds.eyebrow')} title={t('grounds.title')} lede={t('grounds.lede')} align="center" />
+  </div>
+
+  <div class="gutter grounds__grid" data-reveal-group>
+    {
+      tiles.map((tile) => (
+        <figure class="grounds__tile zoom-figure" data-reveal="mask">
+          <Image
+            src={tile.image}
+            alt={tile.alt}
+            widths={[400, 640, 900]}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 30vw"
+            loading="lazy"
+          />
+          <figcaption class="photo-caption">{tile.alt}</figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .grounds {
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  .grounds__head {
+    display: grid;
+    justify-items: center;
+  }
+
+  .grounds__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.6rem, 1.4vw, 1.1rem);
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  @media (min-width: 640px) {
+    .grounds__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .grounds__tile {
+    position: relative;
+    margin: 0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  /* Square, matching the square sources: no subject gets sliced. */
+  .grounds__tile img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .grounds__tile figcaption {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,259 @@
+---
+import { Image } from 'astro:assets';
+import poolAerial from '../assets/photos/pool-aerial.jpg';
+import poolGround from '../assets/photos/pool-ground.jpg';
+import poolLoungers from '../assets/photos/pool-loungers.jpg';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const dec = locale === 'en' ? '.' : ',';
+const w = String(FACTS.poolWidth).replace('.', dec);
+const d = String(FACTS.poolDepth).replace('.', dec);
+const m = locale === 'uk' ? 'м' : 'm';
+
+const stats = [
+  { label: t('pool.stat.size'), value: `${FACTS.poolLength} × ${w}`, suffix: m },
+  { label: t('pool.stat.temp'), value: `${FACTS.poolTempMin}–${FACTS.poolTempMax}`, suffix: '°C' },
+  { label: t('pool.stat.depth'), value: d, suffix: m },
+  { label: t('pool.stat.season'), value: t('pool.stat.seasonValue'), suffix: '' },
+];
+---
+
+<!-- The pool photograph now carries the whole section: full-bleed behind the
+     copy and the figures, darkened only where text sits. Previously the photo
+     was a cropped band with the copy stacked on flat green below it, which
+     read as two unrelated blocks. -->
+<section id="pool" class="pool grain">
+  <div class="pool__media">
+    <Image
+      src={poolAerial}
+      alt={t('hero.imageAlt')}
+      widths={[640, 1024]}
+      sizes="100vw"
+      loading="lazy"
+      class="pool__image"
+      data-parallax="0.05"
+    />
+  </div>
+
+  <div class="gutter pool__inner">
+    <div class="pool__top">
+    <div class="pool__copy" data-reveal-group>
+      <p class="eyebrow pool__eyebrow" data-reveal>{t('pool.eyebrow')}</p>
+      <h2 class="pool__title" data-reveal>{t('pool.title')}</h2>
+      <p class="pool__lede" data-reveal>{t('pool.body')}</p>
+      <p class="pool__free" data-reveal>{t('pool.free')}</p>
+    </div>
+
+      <!-- Ground-level shots at golden hour: the aerial shows the shape of the
+           pool, these show what it is actually like to sit beside it. -->
+      <div class="pool__shots" data-reveal-group>
+        <figure class="pool__shot zoom-figure" data-reveal="mask">
+          <Image src={poolGround} alt={t('pool.cap.morning')} widths={[360, 560, 760]} sizes="(max-width: 900px) 45vw, 22vw" loading="lazy" />
+          <figcaption class="photo-caption">{t('pool.cap.morning')}</figcaption>
+        </figure>
+        <figure class="pool__shot pool__shot--drop zoom-figure" data-reveal="mask">
+          <Image src={poolLoungers} alt={t('pool.cap.loungers')} widths={[360, 560, 760]} sizes="(max-width: 900px) 45vw, 22vw" loading="lazy" />
+          <figcaption class="photo-caption">{t('pool.cap.loungers')}</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <dl class="pool__stats" data-reveal-group>
+      {
+        stats.map((s) => (
+          <div class="pool__stat" data-reveal>
+            <dt>{s.label}</dt>
+            <dd>
+              <span class="pool__stat-value">{s.value}</span>
+              {s.suffix && <span class="pool__stat-suffix">{s.suffix}</span>}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  /* Height comes from the content plus an explicit lead-in, not from a grid
+     with min-height: an earlier version measured 1387px tall with the copy
+     starting at 855px, so the whole first screen was photograph and the text
+     sat below the fold. */
+  .pool {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--color-forest-950);
+  }
+
+  .pool__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .pool__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The pool sits centre-frame, so a vertical crop still shows the water and
+       the HELIKON lettering at any viewport ratio. */
+    object-position: center 52%;
+  }
+
+  /* Weighted to the bottom-left where the copy sits, and kept open through the
+     upper right so the water still reads as water. */
+  .pool::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        to top,
+        oklch(0.16 0.05 139.5 / 0.94) 0%,
+        oklch(0.16 0.05 139.5 / 0.78) 26%,
+        oklch(0.16 0.05 139.5 / 0.34) 58%,
+        oklch(0.16 0.05 139.5 / 0.12) 85%,
+        oklch(0.16 0.05 139.5 / 0.4) 100%
+      ),
+      linear-gradient(to right, oklch(0.16 0.05 139.5 / 0.55) 0%, oklch(0.16 0.05 139.5 / 0.1) 52%, transparent 78%);
+  }
+
+  /* The lead-in is what lets the pool read as a photograph before the copy
+     starts. Tuned so the section lands near one screen on a laptop. */
+  .pool__inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: clamp(11rem, 30vw, 22rem);
+    padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  @media (min-width: 900px) {
+    .pool__top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: end;
+    }
+  }
+
+  .pool__shots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.6rem, 1.4vw, 1rem);
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .pool__shots {
+      margin-top: 0;
+    }
+  }
+
+  .pool__shot {
+    position: relative;
+    margin: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 26px 50px -30px oklch(0.16 0.05 139.5 / 0.75);
+  }
+
+  .pool__shot img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+
+  /* A small vertical offset so the pair reads as composed, not as two cells. */
+  @media (min-width: 900px) {
+    .pool__shot--drop {
+      transform: translateY(2rem);
+    }
+  }
+
+  .pool__eyebrow {
+    color: var(--color-gold-500);
+  }
+
+  .pool__title {
+    margin-top: 1.1rem;
+    font-size: var(--text-display-sm);
+    max-width: 20ch;
+  }
+
+  .pool__lede {
+    margin-top: 1.5rem;
+    max-width: 52ch;
+    color: var(--color-cream);
+    text-shadow: 0 1px 24px oklch(0.16 0.05 139.5 / 0.65);
+  }
+
+  .pool__free {
+    margin-top: 1.75rem;
+    display: inline-block;
+    border: 1px solid color-mix(in oklab, var(--color-gold-500) 45%, transparent);
+    border-radius: 999px;
+    padding: 0.5rem 1.15rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-gold-500);
+    backdrop-filter: blur(4px);
+  }
+
+  /* The stats become a band along the base of the photograph, divided by fine
+     gold rules instead of sitting in their own boxed panel. */
+  .pool__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 0;
+    margin-top: clamp(2.75rem, 6vw, 4.5rem);
+    padding-top: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-500) 34%, transparent);
+  }
+
+  @media (min-width: 780px) {
+    .pool__stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .pool__stat + .pool__stat {
+      padding-left: clamp(1rem, 2.5vw, 2rem);
+      border-left: 1px solid color-mix(in oklab, var(--color-gold-500) 22%, transparent);
+    }
+  }
+
+  .pool__stat dt {
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .pool__stat dd {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+  }
+
+  .pool__stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+    line-height: 1.05;
+    color: var(--color-cream);
+  }
+
+  .pool__stat-suffix {
+    font-size: 0.85rem;
+    color: var(--color-forest-200);
+  }
+</style>

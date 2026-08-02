@@ -1,0 +1,157 @@
+---
+import { Image } from 'astro:assets';
+import banquet from '../assets/photos/hall-red-chairs.jpg';
+import conference from '../assets/photos/hall-projector.jpg';
+import banquetTable from '../assets/photos/banquet-table.jpg';
+import SectionHead from './SectionHead.astro';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const halls = [
+  { image: banquet, name: t('events.banquet.name'), desc: t('events.banquet.desc') },
+  { image: conference, name: t('events.conf.name'), desc: t('events.conf.desc') },
+];
+---
+
+<section id="events" class="events">
+  <div class="gutter">
+    <SectionHead eyebrow={t('events.eyebrow')} title={t('events.title')} lede={t('events.lede')} />
+  </div>
+
+  <div class="gutter events__grid" data-reveal-group>
+    {
+      halls.map((hall) => (
+        <article class="hall" data-reveal>
+          <figure class="hall__media zoom-figure">
+            <Image
+              src={hall.image}
+              alt={hall.name}
+              widths={[480, 760, 1100]}
+              sizes="(max-width: 860px) 100vw, 46vw"
+              loading="lazy"
+            />
+          </figure>
+          <h3 class="hall__name">{hall.name}</h3>
+          <p class="hall__desc">{hall.desc}</p>
+        </article>
+      ))
+    }
+  </div>
+
+  <figure class="gutter events__table zoom-figure" data-reveal="mask">
+    <Image
+      src={banquetTable}
+      alt={t('events.banquet.name')}
+      widths={[600, 900, 1200]}
+      sizes="(max-width: 900px) 100vw, 92vw"
+      loading="lazy"
+    />
+  </figure>
+
+  <div class="gutter events__cta" data-reveal>
+    <div>
+      <p class="events__call-label">{t('events.callLabel')}</p>
+      <a href={`tel:${FACTS.phoneEvents}`} class="events__phone">{FACTS.phoneEventsDisplay}</a>
+    </div>
+    <a href={`tel:${FACTS.phoneEvents}`} class="btn btn-gold">{t('events.cta')}</a>
+  </div>
+</section>
+
+<style>
+  .events {
+    background: var(--color-forest-900);
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  .events__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  @media (min-width: 860px) {
+    .events__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .hall__media {
+    margin: 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* The new hall photographs are 9:16 phone portraits; a 4:3 frame cropped
+     them to a strip of chairs. 4:5 keeps the room readable. */
+  .hall__media img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .hall__name {
+    margin-top: 1.5rem;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+  }
+
+  .hall__desc {
+    margin-top: 0.8rem;
+    max-width: 46ch;
+    color: var(--color-cream-muted);
+  }
+
+  .events__table {
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .events__table img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 42%;
+  }
+
+  /* Centred and grouped: previously these sat at opposite ends of the row,
+     so the button read as unrelated to the number above it. */
+  .events__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1.75rem;
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-700) 26%, transparent);
+  }
+
+  .events__call-label {
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .events__phone {
+    display: inline-block;
+    margin-top: 0.45rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    line-height: 1;
+    color: var(--color-cream);
+    transition: color 0.3s var(--ease-out-quart);
+  }
+
+  .events__phone:hover {
+    color: var(--color-gold-500);
+  }
+</style>

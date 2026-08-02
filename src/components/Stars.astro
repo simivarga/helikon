@@ -1,0 +1,22 @@
+---
+/**
+ * The three-star motif. It is not decoration invented for the site: the stars
+ * are laid into the pool tiles, they sit on the building's roadside sign, and
+ * the hotel is officially rated three stars.
+ */
+interface Props {
+  class?: string;
+  count?: number;
+}
+const { class: className = '', count = 3 } = Astro.props;
+---
+
+<span class={`inline-flex items-center gap-[0.28em] ${className}`} aria-hidden="true">
+  {
+    Array.from({ length: count }).map(() => (
+      <svg viewBox="0 0 24 24" fill="currentColor" class="size-[0.62em]">
+        <path d="M12 1.6l3.1 6.6 7.2.95-5.3 5 1.36 7.15L12 17.9l-6.36 3.4L7 14.15l-5.3-5 7.2-.95z" />
+      </svg>
+    ))
+  }
+</span>

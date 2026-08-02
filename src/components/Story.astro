@@ -1,0 +1,147 @@
+---
+import SectionHead from './SectionHead.astro';
+import Stars from './Stars.astro';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const milestones = [
+  { year: t('story.q1'), label: t('story.q1label') },
+  { year: t('story.q2'), label: t('story.q2label') },
+  { year: t('story.q3'), label: t('story.q3label') },
+  { year: t('story.q4'), label: t('story.q4label') },
+];
+---
+
+<section id="story" class="story grain">
+  <div class="gutter story__grid" data-reveal-group>
+    <div>
+      <SectionHead eyebrow={t('story.eyebrow')} title={t('story.title')} />
+      <div class="story__body">
+        <p data-reveal>{t('story.body1')}</p>
+        <p data-reveal>{t('story.body2')}</p>
+      </div>
+      <p class="story__signature" data-reveal>
+        <Stars class="text-gold-500 text-[0.7rem]" />
+        <span>Helikon · Est. 2005</span>
+      </p>
+    </div>
+
+    <ol class="story__timeline">
+      {
+        milestones.map((m) => (
+          <li class="story__milestone" data-reveal>
+            <span class="story__year">{m.year}</span>
+            <span class="story__label">{m.label}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .story {
+    position: relative;
+    background: var(--color-forest-950);
+  }
+
+
+
+
+  .story__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  @media (min-width: 900px) {
+    .story__grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      align-items: start;
+    }
+  }
+
+  .story__body {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 2rem;
+    max-width: 56ch;
+    color: var(--color-cream-muted);
+  }
+
+  .story__signature {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 2.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  /* A single gold rule runs down the years, so the list reads as a timeline
+     rather than four disconnected numbers. */
+  /* Horizontal on phones — a tall vertical list of four years wasted the
+     screen and pushed the rest of the section down. Vertical from 560px up. */
+  .story__timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-700) 34%, transparent);
+  }
+
+  .story__milestone {
+    position: relative;
+    padding: 1.25rem 0.35rem 0;
+  }
+
+  .story__milestone::before {
+    content: '';
+    position: absolute;
+    top: -3.5px;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-gold-500);
+  }
+
+  @media (min-width: 560px) {
+    .story__timeline {
+      grid-template-columns: 1fr;
+      border-top: 0;
+      border-left: 1px solid color-mix(in oklab, var(--color-gold-700) 34%, transparent);
+    }
+
+    .story__milestone {
+      padding: 1.15rem 0 1.15rem 1.75rem;
+    }
+
+    .story__milestone::before {
+      top: 1.85rem;
+      left: -3.5px;
+    }
+  }
+
+  .story__year {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 5vw, 2.1rem);
+    line-height: 1;
+    color: var(--color-cream);
+  }
+
+  .story__label {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: clamp(0.7rem, 2.4vw, 0.88rem);
+    color: var(--color-cream-muted);
+  }
+</style>

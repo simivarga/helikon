@@ -1,0 +1,200 @@
+---
+import { Image } from 'astro:assets';
+import saltRoom from '../assets/photos/salt-room.jpg';
+import wellnessBg from '../assets/photos/pool-loungers-2.jpg';
+import SectionHead from './SectionHead.astro';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations, formatNumber } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const currency = locale === 'uk' ? '₴' : 'UAH';
+---
+
+<section id="wellness" class="wellness grain">
+  <div class="wellness__bg">
+    <Image src={wellnessBg} alt="" widths={[900, 1400, 1800]} sizes="100vw" loading="lazy" class="wellness__bg-img" data-parallax="0.05" />
+  </div>
+
+  <div class="gutter wellness__grid" data-reveal-group>
+    <!-- The salt-room photo is only 445px wide at source, so it is shown at
+         roughly native size in a portrait frame rather than blown up. -->
+    <figure class="wellness__figure zoom-figure" data-reveal="mask">
+      <Image src={saltRoom} alt={t('wellness.salt.name')} widths={[320, 445]} sizes="(max-width: 900px) 70vw, 26vw" loading="lazy" />
+    </figure>
+
+    <div class="wellness__copy">
+      <SectionHead eyebrow={t('wellness.eyebrow')} title={t('wellness.title')} lede={t('wellness.lede')} />
+
+      <div class="wellness__cards">
+        <article class="wellness__card" data-reveal>
+          <h3>{t('wellness.salt.name')}</h3>
+          <p>{t('wellness.salt.desc')}</p>
+          <dl class="wellness__meta">
+            <div>
+              <dt>{t('wellness.salt.duration')}</dt>
+              <dd>{`${FACTS.saltMinutes} ${t('wellness.salt.min')}`}</dd>
+            </div>
+            <div>
+              <dt>{t('wellness.salt.price')}</dt>
+              <dd>{`${formatNumber(locale, FACTS.saltPrice)} ${currency}`}</dd>
+            </div>
+            <div>
+              <dt>{t('wellness.salt.pass')}</dt>
+              <dd>{`${formatNumber(locale, FACTS.saltPass)} ${currency}`}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="wellness__card" data-reveal>
+          <h3>{t('wellness.sauna.name')}</h3>
+          <p>{t('wellness.sauna.desc')}</p>
+          <a href={`tel:${FACTS.phone}`} class="wellness__link">
+            {t('wellness.sauna.cta')}
+            <span aria-hidden="true">→</span>
+          </a>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* A flat mid-green panel was the weakest surface on the page. The section now
+     sits on a darkened photograph, the same device the pool section uses. */
+  .wellness {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--color-forest-950);
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  .wellness__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .wellness__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 38%;
+  }
+
+  .wellness::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, oklch(0.16 0.05 139.5 / 0.9) 0%, oklch(0.16 0.05 139.5 / 0.7) 45%, oklch(0.16 0.05 139.5 / 0.9) 100%),
+      linear-gradient(to right, oklch(0.16 0.05 139.5 / 0.55), transparent 70%);
+  }
+
+  .wellness__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .wellness__grid {
+      grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
+    }
+  }
+
+  /* Capped at 22rem: the source is only 445px wide, so displaying it smaller
+     keeps it a downscale and therefore sharp. */
+  .wellness__figure {
+    margin: 0;
+    max-width: 22rem;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -34px oklch(0.16 0.05 139.5 / 0.7);
+  }
+
+  .wellness__figure img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 445 / 572;
+    object-fit: cover;
+  }
+
+  .wellness__cards {
+    display: grid;
+    gap: 1px;
+    margin-top: 2.5rem;
+    background: color-mix(in oklab, var(--color-gold-500) 26%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-gold-500) 26%, transparent);
+  }
+
+  @media (min-width: 720px) {
+    .wellness__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .wellness__card {
+    background: color-mix(in oklab, var(--color-forest-950) 82%, transparent);
+    backdrop-filter: blur(10px);
+    padding: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .wellness__card h3 {
+    font-size: 1.5rem;
+  }
+
+  .wellness__card p {
+    margin-top: 0.7rem;
+    font-size: 0.94rem;
+    color: var(--color-cream-muted);
+  }
+
+  /* An equal-width grid, not a flex row: with flex the three values sat at
+     uneven distances because each one is a different string length. */
+  .wellness__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .wellness__meta dt {
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .wellness__meta dd {
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.1;
+    white-space: nowrap;
+    color: var(--color-cream);
+  }
+
+  .wellness__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.6rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-gold-500);
+  }
+
+  .wellness__link span {
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+
+  .wellness__link:hover span {
+    transform: translateX(4px);
+  }
+</style>

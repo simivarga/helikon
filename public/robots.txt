@@ -1,0 +1,6 @@
+# Production robots policy. Preview deploys additionally send
+# `<meta name="robots" content="noindex, nofollow">` via PUBLIC_PREVIEW=1.
+User-agent: *
+Allow: /
+
+Sitemap: https://hotel-helikon.com/sitemap-index.xml

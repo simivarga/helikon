@@ -1,0 +1,154 @@
+---
+import { Image } from 'astro:assets';
+import exterior from '../assets/photos/exterior.jpg';
+import reception from '../assets/photos/reception.jpg';
+import SectionHead from './SectionHead.astro';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations, formatNumber } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const stats = [
+  { value: formatNumber(locale, FACTS.roomCount), label: t('welcome.stat.rooms') },
+  { value: String(FACTS.stars), label: t('welcome.stat.stars') },
+  { value: t('welcome.stat.yearsValue'), label: t('welcome.stat.years') },
+  { value: t('welcome.stat.breakfastValue'), label: t('welcome.stat.breakfast') },
+];
+---
+
+<section id="welcome" class="welcome section-light">
+  <div class="gutter welcome__grid" data-reveal-group>
+    <div class="welcome__copy">
+      <SectionHead eyebrow={t('welcome.eyebrow')} title={t('welcome.title')} />
+      <div class="welcome__body">
+        <p data-reveal>{t('welcome.body1')}</p>
+        <p data-reveal>{t('welcome.body2')}</p>
+      </div>
+
+      <dl class="welcome__stats">
+        {
+          stats.map((s) => (
+            <div class="welcome__stat" data-reveal>
+              <dt>{s.label}</dt>
+              <dd>{s.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="welcome__media">
+      <figure class="welcome__figure zoom-figure" data-reveal="mask">
+        <Image src={exterior} alt={t('grounds.alt.exterior')} widths={[480, 760, 1000]} sizes="(max-width: 900px) 100vw, 45vw" loading="lazy" />
+      </figure>
+      <figure class="welcome__figure welcome__figure--inset zoom-figure" data-reveal="mask">
+        <Image src={reception} alt={t('grounds.alt.reception')} widths={[320, 480, 640]} sizes="(max-width: 900px) 50vw, 22vw" loading="lazy" />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .welcome {
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  .welcome__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .welcome__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+    }
+  }
+
+  .welcome__body {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 2rem;
+    max-width: 54ch;
+    color: color-mix(in oklab, var(--color-forest-900) 82%, transparent);
+  }
+
+  .welcome__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 1.5rem;
+    margin-top: 2.75rem;
+    padding-top: 2.25rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-forest-900) 12%, transparent);
+    max-width: 34rem;
+  }
+
+  @media (min-width: 560px) {
+    .welcome__stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .welcome__stat dt {
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-bronze-600);
+  }
+
+  .welcome__stat dd {
+    margin-top: 0.4rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.1;
+    color: var(--color-forest-900);
+  }
+
+  /* Two photographs, the second overlapping the first. The offset is what
+     makes this read as art-directed rather than a stock two-column block. */
+  .welcome__media {
+    position: relative;
+  }
+
+  .welcome__figure {
+    margin: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -35px oklch(0.185 0.055 139.5 / 0.5);
+  }
+
+  .welcome__figure img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .welcome__figure--inset {
+    position: absolute;
+    width: 46%;
+    right: -1.25rem;
+    bottom: -2.5rem;
+    border: 6px solid var(--color-parchment);
+    box-shadow: 0 24px 50px -28px oklch(0.185 0.055 139.5 / 0.55);
+  }
+
+  .welcome__figure--inset img {
+    aspect-ratio: 1;
+  }
+
+  @media (max-width: 899px) {
+    .welcome__figure--inset {
+      position: static;
+      width: 100%;
+      border: 0;
+      margin-top: 0.9rem;
+    }
+    .welcome__figure--inset img {
+      aspect-ratio: 16 / 10;
+    }
+  }
+</style>

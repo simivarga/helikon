@@ -1,0 +1,120 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { LOCALE_TAGS, FACTS, ui } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations, alternatePaths, LOCALES } from '../i18n/utils';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const { title = t('site.title'), description = t('site.description') } = Astro.props;
+
+const alternates = alternatePaths(Astro.url.pathname);
+
+// Preview builds must never be indexed: a second copy of the hotel's content
+// on a temporary host would compete with hotel-helikon.com in search results
+// and send guests to a URL that will disappear. Production builds omit this.
+const isPreview = import.meta.env.PUBLIC_PREVIEW === '1';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// schema.org — helps the hotel surface correctly in search and maps.
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Hotel',
+  name: 'Hotel Helikon',
+  description: ui[locale]['site.description'],
+  url: canonical.href,
+  telephone: FACTS.phone,
+  email: FACTS.email,
+  starRating: { '@type': 'Rating', ratingValue: FACTS.stars },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: 8.6,
+    bestRating: 10,
+    ratingCount: FACTS.ratingCount,
+  },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'вул. Шевченка 45',
+    addressLocality: 'Яноші',
+    addressRegion: 'Закарпатська область',
+    postalCode: '90233',
+    addressCountry: 'UA',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: 48.2503708, longitude: 22.6191476 },
+  amenityFeature: [
+    'Swimming pool',
+    'Sauna',
+    'Salt room',
+    'Restaurant',
+    'Free WiFi',
+    'Free parking',
+    'Billiards',
+  ].map((name) => ({ '@type': 'LocationFeatureSpecification', name, value: true })),
+  sameAs: [FACTS.facebook, FACTS.instagram, FACTS.telegram],
+};
+---
+
+<!doctype html>
+<html lang={LOCALE_TAGS[locale]} class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {isPreview && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical.href} />
+
+    {
+      LOCALES.map((l) => (
+        <link rel="alternate" hreflang={LOCALE_TAGS[l]} href={new URL(alternates[l], Astro.site).href} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL(alternates.uk, Astro.site).href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:locale" content={LOCALE_TAGS[locale].replace('-', '_')} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#15200F" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    {/* Marks that JS is live before first paint, so reveal states never trap content. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    <Font cssVariable="--fh-sans" preload />
+    <Font cssVariable="--fh-display" preload />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+  </head>
+
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded focus:bg-helikon-900 focus:px-4 focus:py-2 focus:text-helikon-50"
+    >
+      {t('nav.menu')}
+    </a>
+
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>
