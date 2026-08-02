@@ -33,7 +33,11 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           PUBLIC_PREVIEW: '1'
         run: npx astro build
+      # enablement: turns Pages on for the repo the first time this runs, so
+      # nobody has to flip it by hand in Settings before the first deploy.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
