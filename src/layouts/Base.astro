@@ -25,7 +25,11 @@ const isPreview = import.meta.env.PUBLIC_PREVIEW === '1';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 // A stable, unhashed share image: social scrapers need a predictable URL.
-const ogImage = new URL('/og/hotel-helikon.jpg', Astro.site).href;
+// A leading slash in the URL constructor throws `base` away, so on a project
+// page served from /<repo>/ the OG image resolved to the domain root and 404'd
+// — no preview thumbnail when the link is shared. Join through BASE_URL.
+const withBase = (p: string) => `${import.meta.env.BASE_URL}/${p}`.replace(/\/{2,}/g, '/');
+const ogImage = new URL(withBase('og/hotel-helikon.jpg'), Astro.site).href;
 
 // `en` alone is not valid Open Graph — the spec wants language_TERRITORY.
 const OG_LOCALE: Record<Locale, string> = { uk: 'uk_UA', hu: 'hu_HU', en: 'en_GB' };
@@ -137,7 +141,7 @@ const schema = {
     <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#15200F" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
 
     {/* Marks that JS is live before first paint, so reveal states never trap content. */}
     <script is:inline>
