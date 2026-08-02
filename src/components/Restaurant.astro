@@ -24,19 +24,19 @@ const stats = [
 ];
 ---
 
-<section id="restaurant" class="restaurant section-light">
+<section id="restaurant" aria-labelledby="restaurant-title" class="restaurant section-light">
   <div class="gutter restaurant__grid" data-reveal-group>
     <div class="restaurant__media">
       <div class="restaurant__figure restaurant__figure--tall" data-reveal="mask">
-        <PhotoCarousel photos={foodPhotos} label={t('restaurant.title')} id="food" />
+        <PhotoCarousel photos={foodPhotos} label={t('restaurant.title')} id="food" sizes="(max-width: 560px) 90vw, (max-width: 900px) 45vw, 24vw" />
       </div>
       <figure class="restaurant__figure restaurant__figure--wide zoom-figure" data-reveal="mask">
-        <Image src={terrace} alt={t('grounds.alt.terrace')} widths={[400, 700, 900]} sizes="(max-width: 900px) 100vw, 30vw" loading="lazy" />
+        <Image src={terrace} alt={t('grounds.alt.terrace')} widths={[400, 700, 900]} sizes="(max-width: 560px) 90vw, (max-width: 900px) 45vw, 15vw" loading="lazy" />
       </figure>
     </div>
 
     <div class="restaurant__copy">
-      <SectionHead eyebrow={t('restaurant.eyebrow')} title={t('restaurant.title')} lede={t('restaurant.body')} />
+      <SectionHead headingId="restaurant-title" eyebrow={t('restaurant.eyebrow')} title={t('restaurant.title')} lede={t('restaurant.body')} />
 
       <div class="restaurant__actions" data-reveal>
         <a href={FACTS.menuPdf} target="_blank" rel="noopener" class="btn btn-dark">{t('restaurant.menuCta')}</a>
@@ -78,9 +78,17 @@ const stats = [
      paired as an offset diptych rather than forced into one aspect ratio. */
   .restaurant__media {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.9rem;
     align-items: end;
+  }
+
+  /* Below 560px the two-up diptych squeezed each photo to ~160px, which is
+     smaller than the carousel arrows sitting on top of it. */
+  @media (min-width: 560px) {
+    .restaurant__media {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .restaurant__figure {

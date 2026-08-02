@@ -24,9 +24,9 @@ const tiles = [
 ];
 ---
 
-<section id="grounds" class="grounds section-light">
+<section id="grounds" aria-labelledby="grounds-title" class="grounds section-light">
   <div class="gutter grounds__head">
-    <SectionHead eyebrow={t('grounds.eyebrow')} title={t('grounds.title')} lede={t('grounds.lede')} align="center" />
+    <SectionHead headingId="grounds-title" eyebrow={t('grounds.eyebrow')} title={t('grounds.title')} lede={t('grounds.lede')} align="center" />
   </div>
 
   <div class="gutter grounds__grid" data-reveal-group>
@@ -86,9 +86,4 @@ const tiles = [
   }
 
 
-  @media (prefers-reduced-motion: reduce) {
-    .grounds__tile figcaption {
-      transition: none;
-    }
-  }
 </style>

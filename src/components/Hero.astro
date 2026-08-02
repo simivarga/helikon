@@ -18,7 +18,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
 });
 ---
 
-<section class="hero grain scrim">
+<section class="hero grain scrim" aria-labelledby="hero-title">
   <div class="hero__media">
     <Image
       src={gardenBridge}
@@ -37,8 +37,17 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
       <span>{t('hero.eyebrow')}</span>
     </p>
 
-    <h1 class="hero__title">
-      {words.map((word, i) => <span class="hero__word" style={`--i:${i}`}>{word}</span>)}
+    <h1 class="hero__title" id="hero-title">
+      {
+        words.map((word, i) => (
+          <>
+            {/* A real space, not just the span's margin: without it the H1's
+                accessible name ran every word together into one string. */}
+            {i > 0 && ' '}
+            <span class="hero__word" style={`--i:${i}`}>{word}</span>
+          </>
+        ))
+      }
     </h1>
 
     <div class="hero__meta" style={`--d:${0.4 + words.length * 0.05}s`}>
@@ -135,7 +144,6 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
 
   .hero__word {
     display: inline-block;
-    margin-right: 0.24em;
   }
 
   :global(.js) .hero__word {

@@ -9,14 +9,14 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section id="contact" class="contact grain">
+<section id="contact" aria-labelledby="contact-title" class="contact grain">
   <div class="contact__bg">
     <Image src={exterior} alt="" widths={[900, 1280]} sizes="100vw" loading="lazy" class="contact__bg-img" data-parallax="0.04" />
   </div>
 
   <div class="gutter contact__grid" data-reveal-group>
     <div>
-      <SectionHead eyebrow={t('contact.eyebrow')} title={t('contact.title')} />
+      <SectionHead headingId="contact-title" eyebrow={t('contact.eyebrow')} title={t('contact.title')} />
 
       <dl class="contact__details">
         <div data-reveal>
@@ -161,6 +161,7 @@ const t = useTranslations(locale);
   }
 
   .contact__details a {
+    position: relative;
     color: var(--color-cream);
     text-decoration: underline;
     text-decoration-color: color-mix(in oklab, var(--color-gold-500) 45%, transparent);
@@ -169,6 +170,15 @@ const t = useTranslations(locale);
   }
   .contact__details a:hover {
     color: var(--color-gold-500);
+  }
+
+  /* These measured 19px tall — below the 24px WCAG 2.2 AA minimum, and far
+     below a thumb. The hit area is grown with a pseudo-element rather than
+     padding so the definition list keeps its typographic rhythm. */
+  .contact__details a::after {
+    content: '';
+    position: absolute;
+    inset: -13px -4px;
   }
 
   .contact__actions {
@@ -190,7 +200,8 @@ const t = useTranslations(locale);
     align-items: flex-end;
     padding: clamp(1.75rem, 3.5vw, 2.75rem);
     background: radial-gradient(120% 90% at 72% 18%, color-mix(in oklab, var(--color-forest-800) 92%, transparent), color-mix(in oklab, var(--color-forest-950) 96%, transparent));
-    backdrop-filter: blur(8px);
+    /* No backdrop-filter: the radial gradient above is already 92-96% opaque,
+       so blurring the parallaxing photo behind it was work nobody could see. */
     border: 1px solid color-mix(in oklab, var(--color-gold-500) 30%, transparent);
   }
 

@@ -61,7 +61,8 @@
   --color-cream-muted: oklch(0.78 0.026 130); /* #B2BBAA */
 
   /* Note: sage #6B7B62 must never carry body text — cream on sage measures
-     3.97:1 and fails WCAG AA. Use it for large type or surfaces only. */
+     3.97:1 and fails WCAG AA. Use it for large type or surfaces only.
+     Likewise gold-500 on sand measures 1.52:1: light grounds use bronze-600. */
 
   /* semantic */
   --color-ink: var(--color-forest-950);
@@ -134,6 +135,11 @@
     outline: 2px solid var(--color-gold-500);
     outline-offset: 3px;
     border-radius: 2px;
+  }
+
+  /* Gold measures only 1.52:1 on sand, so light sections get a dark ring. */
+  .section-light :focus-visible {
+    outline-color: var(--color-forest-900);
   }
 
   ::selection {
@@ -337,11 +343,15 @@
     background:
       linear-gradient(
         to top,
-        oklch(0.185 0.055 139.5 / 0.9) 0%,
-        oklch(0.185 0.055 139.5 / 0.62) 22%,
-        oklch(0.185 0.055 139.5 / 0.22) 52%,
-        oklch(0.185 0.055 139.5 / 0.06) 78%,
-        oklch(0.185 0.055 139.5 / 0.34) 100%
+        /* Heavier through the lower half than before: measured against the
+           real hero photograph, the old stops left the headline as low as
+           2.25:1 over bright sky. These match the pool section's scrim, which
+           measured 7:1+. */
+        oklch(0.185 0.055 139.5 / 0.95) 0%,
+        oklch(0.185 0.055 139.5 / 0.82) 24%,
+        oklch(0.185 0.055 139.5 / 0.55) 48%,
+        oklch(0.185 0.055 139.5 / 0.2) 76%,
+        oklch(0.185 0.055 139.5 / 0.42) 100%
       ),
       /* A gentle left-weighted wash keeps the headline side calm without
          flattening the whole frame. */
@@ -385,7 +395,11 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    /* Delays matter as much as durations here: without this a staggered group
+       still appeared one item at a time, just with instant fades. */
+    transition-delay: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }

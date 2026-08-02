@@ -4,3 +4,7 @@ dist/
 _v1-archive/
 .DS_Store
 *.log
+
+# Never let a key reach a public repo
+.env
+.env.*

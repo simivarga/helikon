@@ -1,14 +1,22 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
 
 interface Props {
   photos: ImageMetadata[];
   label: string;
   /** Unique per instance so several carousels can share a page. */
   id: string;
+  /** Must match the caller's real rendered width, not the default. */
+  sizes?: string;
 }
-const { photos, label, id } = Astro.props;
+const { photos, label, id, sizes = '(max-width: 900px) 100vw, 48vw' } = Astro.props;
+
+// Arrow glyphs read poorly as accessible names, and were identical in every
+// locale. These describe the action instead.
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 const multiple = photos.length > 1;
 ---
 
@@ -20,12 +28,15 @@ const multiple = photos.length > 1;
     {
       photos.map((photo, i) => (
         <figure class="carousel__slide" data-slide aria-label={`${i + 1} / ${photos.length}`}>
+          {/* Always lazy. Every carousel on this page sits well below the fold,
+              so marking each first slide eager pulled ~677 kB of unseen
+              photography into the initial load. */}
           <Image
             src={photo}
             alt={`${label} — ${i + 1}`}
             widths={[480, 720, 1000]}
-            sizes="(max-width: 860px) 100vw, 48vw"
-            loading={i === 0 ? 'eager' : 'lazy'}
+            sizes={sizes}
+            loading="lazy"
           />
         </figure>
       ))
@@ -35,19 +46,19 @@ const multiple = photos.length > 1;
   {
     multiple && (
       <>
-        <button type="button" class="carousel__nav carousel__nav--prev" data-prev aria-label="←">
+        <button type="button" class="carousel__nav carousel__nav--prev" data-prev aria-label={t('carousel.prev')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M15 5l-7 7 7 7" />
           </svg>
         </button>
-        <button type="button" class="carousel__nav carousel__nav--next" data-next aria-label="→">
+        <button type="button" class="carousel__nav carousel__nav--next" data-next aria-label={t('carousel.next')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
         <div class="carousel__dots" data-dots>
-          {photos.map((_, i) => <button type="button" class="carousel__dot" data-dot={i} aria-label={`${i + 1}`} />)}
+          {photos.map((_, i) => <button type="button" class="carousel__dot" data-dot={i} aria-label={`${t('carousel.photo')} ${i + 1}`} />)}
         </div>
 
         <p class="carousel__count" data-count aria-hidden="true">1 / {photos.length}</p>
@@ -149,6 +160,7 @@ const multiple = photos.length > 1;
   }
 
   .carousel__dot {
+    position: relative;
     width: 0.4rem;
     height: 0.4rem;
     padding: 0;
@@ -159,6 +171,13 @@ const multiple = photos.length > 1;
     transition:
       background-color 0.35s var(--ease-out-quart),
       width 0.35s var(--ease-out-expo);
+  }
+
+  /* Invisible 44px hit area around a deliberately small dot. */
+  .carousel__dot::before {
+    content: '';
+    position: absolute;
+    inset: -19px -8px;
   }
 
   .carousel__dot[aria-current='true'] {
@@ -204,7 +223,6 @@ const multiple = photos.length > 1;
     const render = () => {
       dots.forEach((d, i) => d.setAttribute('aria-current', String(i === index)));
       if (count) count.textContent = `${index + 1} / ${slides.length}`;
-      // Hide the arrow that would do nothing rather than leaving a dead button.
       // No disabled state: the arrows wrap, so both are always live.
     };
 

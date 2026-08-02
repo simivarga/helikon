@@ -26,11 +26,11 @@ const stats = [
      copy and the figures, darkened only where text sits. Previously the photo
      was a cropped band with the copy stacked on flat green below it, which
      read as two unrelated blocks. -->
-<section id="pool" class="pool grain">
+<section id="pool" class="pool grain" aria-labelledby="pool-title">
   <div class="pool__media">
     <Image
       src={poolAerial}
-      alt={t('hero.imageAlt')}
+      alt={t('pool.imageAlt')}
       widths={[640, 1024]}
       sizes="100vw"
       loading="lazy"
@@ -43,7 +43,7 @@ const stats = [
     <div class="pool__top">
     <div class="pool__copy" data-reveal-group>
       <p class="eyebrow pool__eyebrow" data-reveal>{t('pool.eyebrow')}</p>
-      <h2 class="pool__title" data-reveal>{t('pool.title')}</h2>
+      <h2 class="pool__title" id="pool-title" data-reveal>{t('pool.title')}</h2>
       <p class="pool__lede" data-reveal>{t('pool.body')}</p>
       <p class="pool__free" data-reveal>{t('pool.free')}</p>
     </div>

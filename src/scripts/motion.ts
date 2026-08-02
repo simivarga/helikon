@@ -10,11 +10,40 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
  * Reveal anything marked `data-reveal`. Children of a `data-reveal-group` are
  * staggered in document order, which keeps the markup free of index bookkeeping.
  */
-function reveal(el: HTMLElement, index: number) {
-  // setTimeout rather than gsap.delayedCall: this fires for every reveal on
-  // every re-entry, and each delayedCall added a tween to the global timeline.
-  if (index === 0) el.classList.add('is-revealed');
-  else window.setTimeout(() => el.classList.add('is-revealed'), index * 70);
+// Pending stagger timers, so a fast scroll cannot leave a stale timeout that
+// re-reveals an element the trigger has already marked as left.
+const pending = new WeakMap<HTMLElement, number>();
+
+function clearPending(el: HTMLElement) {
+  const id = pending.get(el);
+  if (id !== undefined) {
+    window.clearTimeout(id);
+    pending.delete(el);
+  }
+}
+
+function showGroup(members: HTMLElement[]) {
+  members.forEach((el, i) => {
+    clearPending(el);
+    if (i === 0) {
+      el.classList.add('is-revealed');
+      return;
+    }
+    pending.set(
+      el,
+      window.setTimeout(() => {
+        pending.delete(el);
+        el.classList.add('is-revealed');
+      }, i * 70),
+    );
+  });
+}
+
+function hideGroup(members: HTMLElement[]) {
+  members.forEach((el) => {
+    clearPending(el);
+    el.classList.remove('is-revealed');
+  });
 }
 
 function initReveals() {
@@ -25,21 +54,28 @@ function initReveals() {
     return;
   }
 
+  // One trigger per group rather than per element. Every member of a group
+  // shared identical start/end bounds, so N triggers were doing one trigger's
+  // work and firing N separate callbacks in the same frame.
+  const groups = new Map<Element, HTMLElement[]>();
   items.forEach((el) => {
-    const group = el.closest('[data-reveal-group]');
-    const siblings = group ? Array.from(group.querySelectorAll<HTMLElement>('[data-reveal]')) : [el];
-    const index = siblings.indexOf(el);
+    const key = el.closest('[data-reveal-group]') ?? el;
+    const list = groups.get(key);
+    if (list) list.push(el);
+    else groups.set(key, [el]);
+  });
 
-    // Not `once`: Kristof wants the animation to play again every time a
-    // section leaves the viewport and comes back, scrolling either way.
+  groups.forEach((members, trigger) => {
+    // Not `once`: the animation replays every time a section leaves the
+    // viewport and comes back, scrolling either way.
     ScrollTrigger.create({
-      trigger: group ?? el,
+      trigger,
       start: 'top 88%',
       end: 'bottom 8%',
-      onEnter: () => reveal(el, index),
-      onEnterBack: () => reveal(el, index),
-      onLeave: () => el.classList.remove('is-revealed'),
-      onLeaveBack: () => el.classList.remove('is-revealed'),
+      onEnter: () => showGroup(members),
+      onEnterBack: () => showGroup(members),
+      onLeave: () => hideGroup(members),
+      onLeaveBack: () => hideGroup(members),
     });
   });
 }
@@ -50,9 +86,6 @@ function initParallax() {
 
   gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
     const strength = parseFloat(el.dataset.parallax || '0.12');
-    // Promote to its own layer so scrubbing never repaints the section.
-    el.style.willChange = 'transform';
-    el.style.backfaceVisibility = 'hidden';
     gsap.fromTo(
       el,
       { yPercent: -strength * 100 },
@@ -63,7 +96,15 @@ function initParallax() {
           trigger: el.parentElement ?? el,
           start: 'top bottom',
           end: 'bottom top',
+          // No numeric scrub: Lenis already smooths the scroll source, and
+          // stacking a second lag makes the parallax feel detached.
           scrub: true,
+          // Promote only while actually scrubbing. Setting will-change at load
+          // kept three large photographs on their own GPU layers for the whole
+          // session, even if the user never scrolled to them.
+          onToggle: (self) => {
+            el.style.willChange = self.isActive ? 'transform' : '';
+          },
         },
       },
     );
@@ -74,13 +115,15 @@ function initSmoothScroll() {
   if (prefersReducedMotion) return;
 
   const lenis = new Lenis({
-    // Shorter and less aggressive than before: at duration 1.1 the page kept
-    // gliding after the wheel stopped, which reads as lag rather than smooth.
-    duration: 0.85,
-    easing: (t: number) => 1 - Math.pow(1 - t, 3),
+    // `lerp`, not `duration`: Lenis applies duration+easing to *every* wheel
+    // tick, resetting the ease to t=0 each time. With an ease-out curve that
+    // keeps the scroll permanently in the fast opening of the curve, which is
+    // what read as bumpy. `lerp` damps continuously and stays velocity-stable.
+    lerp: 0.1,
     smoothWheel: true,
     wheelMultiplier: 1,
-    touchMultiplier: 1.6,
+    // touchMultiplier is deliberately absent: with syncTouch false Lenis never
+    // touches touch events, so it was dead configuration.
     syncTouch: false,
   });
 
@@ -103,7 +146,13 @@ function initSmoothScroll() {
       const target = document.querySelector(id);
       if (!target) return;
       event.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -80 });
+      // A deliberate jump is the one case where a fixed duration and ease are
+      // the right tool.
+      lenis.scrollTo(target as HTMLElement, {
+        offset: -80,
+        duration: 0.9,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3),
+      });
     });
   });
 }

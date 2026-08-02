@@ -17,10 +17,10 @@ const stats = [
 ];
 ---
 
-<section id="welcome" class="welcome section-light">
+<section id="welcome" aria-labelledby="welcome-title" class="welcome section-light">
   <div class="gutter welcome__grid" data-reveal-group>
     <div class="welcome__copy">
-      <SectionHead eyebrow={t('welcome.eyebrow')} title={t('welcome.title')} />
+      <SectionHead headingId="welcome-title" eyebrow={t('welcome.eyebrow')} title={t('welcome.title')} />
       <div class="welcome__body">
         <p data-reveal>{t('welcome.body1')}</p>
         <p data-reveal>{t('welcome.body2')}</p>
@@ -43,7 +43,7 @@ const stats = [
         <Image src={exterior} alt={t('grounds.alt.exterior')} widths={[480, 760, 1000]} sizes="(max-width: 900px) 100vw, 45vw" loading="lazy" />
       </figure>
       <figure class="welcome__figure welcome__figure--inset zoom-figure" data-reveal="mask">
-        <Image src={reception} alt={t('grounds.alt.reception')} widths={[320, 480, 640]} sizes="(max-width: 900px) 50vw, 22vw" loading="lazy" />
+        <Image src={reception} alt={t('grounds.alt.reception')} widths={[320, 480, 640]} sizes="(max-width: 900px) 90vw, 22vw" loading="lazy" />
       </figure>
     </div>
   </div>
@@ -132,7 +132,7 @@ const stats = [
     width: 46%;
     right: -1.25rem;
     bottom: -2.5rem;
-    border: 6px solid var(--color-parchment);
+    border: 6px solid var(--color-sand-100);
     box-shadow: 0 24px 50px -28px oklch(0.185 0.055 139.5 / 0.55);
   }
 

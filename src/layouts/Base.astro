@@ -3,7 +3,8 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { LOCALE_TAGS, FACTS, ui } from '../i18n/ui';
+import { LOCALE_TAGS, FACTS, ui, type Locale } from '../i18n/ui';
+import { ROOMS } from '../data/rooms';
 import { getLocaleFromUrl, useTranslations, alternatePaths, LOCALES } from '../i18n/utils';
 
 interface Props {
@@ -23,16 +24,54 @@ const alternates = alternatePaths(Astro.url.pathname);
 const isPreview = import.meta.env.PUBLIC_PREVIEW === '1';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
+// A stable, unhashed share image: social scrapers need a predictable URL.
+const ogImage = new URL('/og/hotel-helikon.jpg', Astro.site).href;
+
+// `en` alone is not valid Open Graph — the spec wants language_TERRITORY.
+const OG_LOCALE: Record<Locale, string> = { uk: 'uk_UA', hu: 'hu_HU', en: 'en_GB' };
+
+const prices = ROOMS.map((r) => r.price);
+const AMENITIES: Record<Locale, string[]> = {
+  uk: ['Басейн', 'Сауна', 'Соляна кімната', 'Ресторан', 'Безкоштовний Wi-Fi', 'Безкоштовна парковка', 'Більярд'],
+  hu: ['Medence', 'Szauna', 'Sószoba', 'Étterem', 'Ingyenes wifi', 'Ingyenes parkolás', 'Biliárd'],
+  en: ['Swimming pool', 'Sauna', 'Salt room', 'Restaurant', 'Free WiFi', 'Free parking', 'Billiards'],
+};
+
+// A second, far better-known "Hotel Helikon" sits on Lake Balaton in Keszthely:
+// it owns hotelhelikon.hu, has its own Wikipedia article and 4,000+ Booking
+// reviews, and takes all ten organic results for the bare brand name. That
+// fight is not winnable and not worth picking. What IS winnable is being the
+// unambiguous answer the moment a place name enters the query — so the entity
+// is pinned to its geography in every language, and schema.org's
+// disambiguatingDescription (the property that exists for exactly this) spells
+// out which Helikon this is.
+const BRAND_NAME = { uk: 'Готель Гелікон', hu: 'Hotel Helikon', en: 'Hotel Helikon' };
+const DISAMBIGUATION = {
+  uk: 'Готель «Гелікон» у селі Яноші Берегівського району на Закарпатті, Україна. Не пов’язаний з готелем Helikon у Кестгеї на озері Балатон в Угорщині.',
+  hu: 'A kárpátaljai Hotel Helikon Makkosjánosiban, Beregszász mellett, Ukrajnában. Nem azonos a Balaton parti, keszthelyi Hotel Helikonnal.',
+  en: 'Hotel Helikon in the village of Jánosi near Berehove, Transcarpathia, Ukraine. Not the Hotel Helikon in Keszthely on Lake Balaton, Hungary.',
+};
+
 // schema.org — helps the hotel surface correctly in search and maps.
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Hotel',
-  name: 'Hotel Helikon',
+  name: BRAND_NAME[locale],
+  alternateName: ['Hotel Helikon', 'Готель Гелікон', 'Helikon Makkosjánosi'],
+  disambiguatingDescription: DISAMBIGUATION[locale],
   description: ui[locale]['site.description'],
   url: canonical.href,
   telephone: FACTS.phone,
   email: FACTS.email,
-  starRating: { '@type': 'Rating', ratingValue: FACTS.stars },
+  image: [ogImage],
+  priceRange: `${Math.min(...prices)}–${Math.max(...prices)} UAH`,
+  currenciesAccepted: 'UAH',
+  checkinTime: FACTS.checkIn,
+  checkoutTime: FACTS.checkOut,
+  numberOfRooms: FACTS.roomCount,
+  availableLanguage: ['Ukrainian', 'Hungarian', 'English'],
+  hasMap: FACTS.maps,
+  starRating: { '@type': 'Rating', ratingValue: FACTS.stars, bestRating: 5 },
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: 8.6,
@@ -48,16 +87,17 @@ const schema = {
     addressCountry: 'UA',
   },
   geo: { '@type': 'GeoCoordinates', latitude: 48.2503708, longitude: 22.6191476 },
-  amenityFeature: [
-    'Swimming pool',
-    'Sauna',
-    'Salt room',
-    'Restaurant',
-    'Free WiFi',
-    'Free parking',
-    'Billiards',
-  ].map((name) => ({ '@type': 'LocationFeatureSpecification', name, value: true })),
-  sameAs: [FACTS.facebook, FACTS.instagram, FACTS.telegram],
+  // Localised: the Hungarian and Ukrainian pages were emitting English
+  // amenity names in their own structured data.
+  amenityFeature: AMENITIES[locale].map((name) => ({
+    '@type': 'LocationFeatureSpecification',
+    name,
+    value: true,
+  })),
+  // Booking.com included deliberately: "Hotel Helikon" collides with an
+  // unrelated hotel at Lake Balaton, so every same-entity reference helps
+  // search engines tell them apart.
+  sameAs: [FACTS.facebook, FACTS.instagram, FACTS.telegram, FACTS.booking],
 };
 ---
 
@@ -82,8 +122,19 @@ const schema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
-    <meta property="og:locale" content={LOCALE_TAGS[locale].replace('-', '_')} />
+    <meta property="og:site_name" content="Hotel Helikon" />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    {LOCALES.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content={t('pool.imageAlt')} />
+
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#15200F" />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -102,9 +153,9 @@ const schema = {
   <body>
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded focus:bg-helikon-900 focus:px-4 focus:py-2 focus:text-helikon-50"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded focus:bg-forest-950 focus:px-4 focus:py-2 focus:text-cream"
     >
-      {t('nav.menu')}
+      {t('nav.skipToContent')}
     </a>
 
     <Header />

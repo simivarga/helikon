@@ -5,13 +5,16 @@ interface Props {
   lede?: string;
   align?: 'start' | 'center';
   class?: string;
+  /** Set when the enclosing <section> points at this heading with
+      aria-labelledby, so screen readers announce a named region. */
+  headingId?: string;
 }
-const { eyebrow, title, lede, align = 'start', class: className = '' } = Astro.props;
+const { eyebrow, title, lede, align = 'start', class: className = '', headingId } = Astro.props;
 ---
 
 <div class:list={['section-head', align === 'center' && 'is-center', className]}>
   <p class="eyebrow section-head__eyebrow" data-reveal>{eyebrow}</p>
-  <h2 class="section-head__title" data-reveal>{title}</h2>
+  <h2 class="section-head__title" id={headingId} data-reveal>{title}</h2>
   {lede && <p class="section-head__lede" data-reveal>{lede}</p>}
   <hr class="rule-gold section-head__rule" data-reveal />
 </div>

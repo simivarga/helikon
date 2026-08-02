@@ -11,9 +11,9 @@ const t = useTranslations(locale);
 const currency = locale === 'uk' ? '₴' : 'UAH';
 ---
 
-<section id="rooms" class="rooms">
+<section id="rooms" aria-labelledby="rooms-title" class="rooms">
   <div class="gutter">
-    <SectionHead eyebrow={t('rooms.eyebrow')} title={t('rooms.title')} lede={t('rooms.lede')} />
+    <SectionHead headingId="rooms-title" eyebrow={t('rooms.eyebrow')} title={t('rooms.title')} lede={t('rooms.lede')} />
   </div>
 
   <ul class="gutter rooms__list" data-reveal-group>
@@ -89,7 +89,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     padding-bottom: 0;
   }
 
-  @media (min-width: 860px) {
+  @media (min-width: 900px) {
     .room {
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     }
