@@ -3,9 +3,10 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { LOCALE_TAGS, FACTS, ui, type Locale } from '../i18n/ui';
+import { LOCALE_TAGS, FACTS, type Locale } from '../i18n/ui';
 import { ROOMS } from '../data/rooms';
-import { getLocaleFromUrl, useTranslations, alternatePaths, LOCALES } from '../i18n/utils';
+import { getLocaleFromUrl, useTranslations, alternatePaths, localePath, LOCALES } from '../i18n/utils';
+import { jsonLd } from '../i18n/faq';
 
 interface Props {
   title?: string;
@@ -14,9 +15,43 @@ interface Props {
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const { title = t('site.title'), description = t('site.description') } = Astro.props;
+
+// Search-result title and snippet for each language's home page. Kept here,
+// not in the page copy, because they are sized to what Google shows rather
+// than written as prose: titles measured at 499-551 px of 20 px Arial against
+// a ~580 px cut-off, descriptions at 141 characters or fewer. Each puts the
+// brand next to a place name (Kárpátalja, Закарпаття, Transcarpathia) and a
+// nearby town, because that is the query shape this hotel can win: the bare
+// brand "Hotel Helikon" belongs to the far larger hotel in Keszthely.
+// Subpages pass their own title and description.
+const SERP: Record<Locale, { title: string; description: string }> = {
+  uk: {
+    title: 'Готель Гелікон Закарпаття | Басейн і сауна біля Берегового',
+    description:
+      'Готель «Гелікон» у Яноші, 6 км від Берегового. Підігрітий басейн, сауна, соляна кімната, ресторан. Сніданок у вартості, парковка безкоштовна.',
+  },
+  hu: {
+    title: 'Hotel Helikon Kárpátalja | Medencés hotel Beregszász mellett',
+    description:
+      'Hotel Helikon Makkosjánosiban, Beregszásztól 6 km-re. Fűtött medence, szauna, sószoba, étterem. A reggeli az árban van, a parkolás ingyenes.',
+  },
+  en: {
+    title: 'Hotel Helikon Transcarpathia | Pool hotel near Berehove',
+    description:
+      'Hotel Helikon in Jánosi, 6 km from Berehove, Ukraine. Heated pool, sauna, salt room and restaurant. Breakfast included, free parking.',
+  },
+};
+const { title = SERP[locale].title, description = SERP[locale].description } = Astro.props;
 
 const alternates = alternatePaths(Astro.url.pathname);
+
+// Language-only hreflang: `hu-HU` would aim the Hungarian page at Hungary,
+// while much of its audience is the Hungarian-speaking community of
+// Transcarpathia itself. Must match the sitemap's HREFLANG in astro.config.
+const HREFLANG: Record<Locale, string> = { uk: 'uk', hu: 'hu', en: 'en' };
+// A visitor whose language is none of the three is better served in English
+// than on the Ukrainian root page. Mirrors X_DEFAULT_LOCALE in astro.config.
+const X_DEFAULT: Locale = 'en';
 
 // Preview builds must never be indexed: a second copy of the hotel's content
 // on a temporary host would compete with hotel-helikon.com in search results
@@ -30,15 +65,67 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 // — no preview thumbnail when the link is shared. Join through BASE_URL.
 const withBase = (p: string) => `${import.meta.env.BASE_URL}/${p}`.replace(/\/{2,}/g, '/');
 const ogImage = new URL(withBase('og/hotel-helikon.jpg'), Astro.site).href;
+const ogImageAlt = t('pool.imageAlt');
 
 // `en` alone is not valid Open Graph — the spec wants language_TERRITORY.
 const OG_LOCALE: Record<Locale, string> = { uk: 'uk_UA', hu: 'hu_HU', en: 'en_GB' };
 
+// One identity for the hotel across every page and language. Search engines
+// merge nodes that share an @id, so the Ukrainian, Hungarian and English pages
+// all describe the same hotel rather than three look-alikes.
+const siteRoot = new URL(withBase(''), Astro.site).href;
+const ID = {
+  website: `${siteRoot}#website`,
+  hotel: `${siteRoot}#hotel`,
+  webpage: `${canonical.href}#webpage`,
+};
+const homeUrl = new URL(localePath(locale), Astro.site).href;
+
 const prices = ROOMS.map((r) => r.price);
+
+// Only amenities with a source: the hotel's own site, Booking.com, and guest
+// reviews (see the verified-facts note). Names follow the wording Google's
+// hotel amenity list uses, localised per page.
 const AMENITIES: Record<Locale, string[]> = {
-  uk: ['Басейн', 'Сауна', 'Соляна кімната', 'Ресторан', 'Безкоштовний Wi-Fi', 'Безкоштовна парковка', 'Більярд'],
-  hu: ['Medence', 'Szauna', 'Sószoba', 'Étterem', 'Ingyenes wifi', 'Ingyenes parkolás', 'Biliárd'],
-  en: ['Swimming pool', 'Sauna', 'Salt room', 'Restaurant', 'Free WiFi', 'Free parking', 'Billiards'],
+  uk: [
+    'Відкритий підігрівний басейн',
+    'Сауна',
+    'Соляна кімната',
+    'Ресторан',
+    'Сніданок включено',
+    'Безкоштовний Wi-Fi',
+    'Безкоштовна парковка',
+    'Зарядна станція для електромобілів',
+    'Ліфт',
+    'Можна з домашніми тваринами',
+    'Більярд',
+  ],
+  hu: [
+    'Fűtött kültéri medence',
+    'Szauna',
+    'Sószoba',
+    'Étterem',
+    'Reggeli az árban',
+    'Ingyenes wifi',
+    'Ingyenes parkolás',
+    'Elektromosautó-töltő',
+    'Lift',
+    'Háziállat bevihető',
+    'Biliárd',
+  ],
+  en: [
+    'Heated outdoor swimming pool',
+    'Sauna',
+    'Salt room',
+    'Restaurant',
+    'Breakfast included',
+    'Free WiFi',
+    'Free parking',
+    'Electric vehicle charging station',
+    'Elevator',
+    'Pets allowed',
+    'Billiards',
+  ],
 };
 
 // A second, far better-known "Hotel Helikon" sits on Lake Balaton in Keszthely:
@@ -52,36 +139,48 @@ const AMENITIES: Record<Locale, string[]> = {
 const BRAND_NAME = { uk: 'Готель Гелікон', hu: 'Hotel Helikon', en: 'Hotel Helikon' };
 const DISAMBIGUATION = {
   uk: 'Готель «Гелікон» у селі Яноші Берегівського району на Закарпатті, Україна. Не пов’язаний з готелем Helikon у Кестгеї на озері Балатон в Угорщині.',
-  hu: 'A kárpátaljai Hotel Helikon Makkosjánosiban, Beregszász mellett, Ukrajnában. Nem azonos a Balaton parti, keszthelyi Hotel Helikonnal.',
+  hu: 'A kárpátaljai Hotel Helikon Makkosjánosiban, Beregszász mellett, Ukrajnában. Nem azonos a Balaton-parti, keszthelyi Hotel Helikonnal.',
   en: 'Hotel Helikon in the village of Jánosi near Berehove, Transcarpathia, Ukraine. Not the Hotel Helikon in Keszthely on Lake Balaton, Hungary.',
 };
 
-// schema.org — helps the hotel surface correctly in search and maps.
-const schema = {
-  '@context': 'https://schema.org',
+// The village, tied to its Wikidata item and Wikipedia articles: the
+// strongest machine-readable statement of *where* this Helikon is.
+const VILLAGE = { uk: 'Яноші', hu: 'Makkosjánosi', en: 'Yanoshi (Jánosi)' };
+
+const hotel = {
   '@type': 'Hotel',
+  '@id': ID.hotel,
   name: BRAND_NAME[locale],
-  alternateName: ['Hotel Helikon', 'Готель Гелікон', 'Helikon Makkosjánosi'],
+  alternateName: [
+    'Hotel Helikon',
+    'Готель Гелікон',
+    'Helikon Hotel & Sauna',
+    'Hotel Helikon Kárpátalja',
+    'Hotel Helikon Makkosjánosi',
+    'Готель Гелікон Закарпаття',
+    'Hotel Helikon Transcarpathia',
+  ],
   disambiguatingDescription: DISAMBIGUATION[locale],
-  description: ui[locale]['site.description'],
-  url: canonical.href,
+  description: SERP[locale].description,
+  url: homeUrl,
   telephone: FACTS.phone,
   email: FACTS.email,
   image: [ogImage],
+  foundingDate: String(FACTS.established),
   priceRange: `${Math.min(...prices)}–${Math.max(...prices)} UAH`,
   currenciesAccepted: 'UAH',
+  // Booking.com's house rules for this property: cash only.
+  paymentAccepted: 'Cash',
+  petsAllowed: true,
   checkinTime: FACTS.checkIn,
   checkoutTime: FACTS.checkOut,
   numberOfRooms: FACTS.roomCount,
-  availableLanguage: ['Ukrainian', 'Hungarian', 'English'],
+  availableLanguage: ['uk', 'hu', 'en'],
   hasMap: FACTS.maps,
   starRating: { '@type': 'Rating', ratingValue: FACTS.stars, bestRating: 5 },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: 8.6,
-    bestRating: 10,
-    ratingCount: FACTS.ratingCount,
-  },
+  // No aggregateRating on purpose. The 8.6 is Booking.com's score, and
+  // Google's review-snippet rules forbid marking up ratings collected on
+  // another site. It stays visible on the page, just not in structured data.
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'вул. Шевченка 45',
@@ -90,9 +189,17 @@ const schema = {
     postalCode: '90233',
     addressCountry: 'UA',
   },
-  geo: { '@type': 'GeoCoordinates', latitude: 48.2503708, longitude: 22.6191476 },
-  // Localised: the Hungarian and Ukrainian pages were emitting English
-  // amenity names in their own structured data.
+  geo: { '@type': 'GeoCoordinates', latitude: FACTS.lat, longitude: FACTS.lng },
+  containedInPlace: {
+    '@type': 'Place',
+    name: VILLAGE[locale],
+    sameAs: [
+      'https://www.wikidata.org/wiki/Q830776',
+      'https://uk.wikipedia.org/wiki/%D0%AF%D0%BD%D0%BE%D1%88%D1%96',
+      'https://hu.wikipedia.org/wiki/Makkosj%C3%A1nosi',
+      'https://en.wikipedia.org/wiki/Yanoshi',
+    ],
+  },
   amenityFeature: AMENITIES[locale].map((name) => ({
     '@type': 'LocationFeatureSpecification',
     name,
@@ -103,6 +210,33 @@ const schema = {
   // search engines tell them apart.
   sameAs: [FACTS.facebook, FACTS.instagram, FACTS.telegram, FACTS.booking],
 };
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': ID.website,
+      url: siteRoot,
+      name: 'Hotel Helikon',
+      alternateName: ['Готель Гелікон', 'Hotel Helikon Kárpátalja', 'Hotel Helikon Transcarpathia'],
+      inLanguage: ['uk', 'hu', 'en'],
+      publisher: { '@id': ID.hotel },
+    },
+    hotel,
+    {
+      '@type': 'WebPage',
+      '@id': ID.webpage,
+      url: canonical.href,
+      name: title,
+      description,
+      inLanguage: HREFLANG[locale],
+      isPartOf: { '@id': ID.website },
+      about: { '@id': ID.hotel },
+      primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630, caption: ogImageAlt },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -112,36 +246,46 @@ const schema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {isPreview && <meta name="robots" content="noindex, nofollow" />}
+    {
+      isPreview ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+      )
+    }
     <link rel="canonical" href={canonical.href} />
 
     {
       LOCALES.map((l) => (
-        <link rel="alternate" hreflang={LOCALE_TAGS[l]} href={new URL(alternates[l], Astro.site).href} />
+        <link rel="alternate" hreflang={HREFLANG[l]} href={new URL(alternates[l], Astro.site).href} />
       ))
     }
-    <link rel="alternate" hreflang="x-default" href={new URL(alternates.uk, Astro.site).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(alternates[X_DEFAULT], Astro.site).href} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
-    <meta property="og:site_name" content="Hotel Helikon" />
+    <meta property="og:site_name" content={BRAND_NAME[locale]} />
     <meta property="og:locale" content={OG_LOCALE[locale]} />
     {LOCALES.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content={t('pool.imageAlt')} />
+    <meta property="og:image:alt" content={ogImageAlt} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
     <meta name="theme-color" content="#15200F" />
 
+    <link rel="icon" href={withBase('favicon.ico')} sizes="32x32" />
     <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
+    <link rel="manifest" href={withBase('site.webmanifest')} />
 
     {/* Marks that JS is live before first paint, so reveal states never trap content. */}
     <script is:inline>
@@ -151,7 +295,7 @@ const schema = {
     <Font cssVariable="--fh-sans" preload />
     <Font cssVariable="--fh-display" preload />
 
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+    <script type="application/ld+json" set:html={jsonLd(schema)} is:inline />
   </head>
 
   <body>
