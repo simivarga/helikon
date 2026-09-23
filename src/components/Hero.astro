@@ -32,7 +32,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
   </div>
 
   <div class="gutter hero__inner">
-    <p class="eyebrow hero__eyebrow" style="--d:0.15s">
+    <p class="eyebrow hero__eyebrow" style="--d:0.05s">
       <Stars class="text-gold-500" />
       <span>{t('hero.eyebrow')}</span>
     </p>
@@ -44,13 +44,13 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
             {/* A real space, not just the span's margin: without it the H1's
                 accessible name ran every word together into one string. */}
             {i > 0 && ' '}
-            <span class="hero__word" style={`--i:${i}`}>{word}</span>
+            <span class="hero__word">{word}</span>
           </>
         ))
       }
     </h1>
 
-    <div class="hero__meta" style={`--d:${0.4 + words.length * 0.05}s`}>
+    <div class="hero__meta" style="--d:0.2s">
       <span class="hero__score">
         <strong>{score}</strong>
         <span class="hero__score-max">/ 10</span>
@@ -61,13 +61,13 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
       <span>{t('hero.rating')}</span>
     </div>
 
-    <div class="hero__actions" style={`--d:${0.5 + words.length * 0.05}s`}>
+    <div class="hero__actions" style="--d:0.3s">
       <a href={FACTS.booking} target="_blank" rel="noopener" class="btn btn-gold">{t('hero.cta.book')}</a>
       <a href="#rooms" class="btn btn-outline">{t('hero.cta.rooms')}</a>
     </div>
   </div>
 
-  <a href="#welcome" class="hero__scroll" style="--d:1.3s" aria-label={t('hero.scroll')}>
+  <a href="#welcome" class="hero__scroll" style="--d:0.45s" aria-label={t('hero.scroll')}>
     <span class="eyebrow">{t('hero.scroll')}</span>
     <span class="hero__scroll-line"></span>
   </a>
@@ -96,9 +96,10 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
     object-position: center 58%;
   }
 
+  /* The whole load sequence settles within about a second. */
   :global(.js) .hero__image {
-    transform: scale(1.08);
-    animation: hero-settle 2.6s var(--ease-out-expo) forwards;
+    transform: scale(1.04);
+    animation: hero-settle 1s var(--ease-out-quart) forwards;
   }
 
   @keyframes hero-settle {
@@ -146,16 +147,16 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
     display: inline-block;
   }
 
-  :global(.js) .hero__word {
-    opacity: 0;
-    transform: translateY(0.45em);
-    animation: word-in 1.2s var(--ease-out-expo) forwards;
-    animation-delay: calc(0.3s + var(--i) * 0.05s);
+  /* Transform only, never opacity: the headline is the page's LCP element on
+     mobile, and a fade-in held its first paint back until the animation had
+     run. It is readable from the first frame and just settles into place. */
+  :global(.js) .hero__title {
+    transform: translateY(0.25em);
+    animation: title-settle 0.7s var(--ease-out-quart) forwards;
   }
 
-  @keyframes word-in {
+  @keyframes title-settle {
     to {
-      opacity: 1;
       transform: none;
     }
   }
@@ -249,7 +250,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
   :global(.js) .hero__scroll {
     opacity: 0;
     transform: translateY(0.8rem);
-    animation: fade-up 1.1s var(--ease-out-expo) forwards;
+    animation: fade-up 0.55s var(--ease-out-quart) forwards;
     animation-delay: var(--d, 0s);
   }
 
@@ -268,7 +269,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
 
   @media (prefers-reduced-motion: reduce) {
     :global(.js) .hero__image,
-    :global(.js) .hero__word,
+    :global(.js) .hero__title,
     :global(.js) .hero__eyebrow,
     :global(.js) .hero__meta,
     :global(.js) .hero__actions,

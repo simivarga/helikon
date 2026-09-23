@@ -16,10 +16,10 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     <SectionHead headingId="rooms-title" eyebrow={t('rooms.eyebrow')} title={t('rooms.title')} lede={t('rooms.lede')} />
   </div>
 
-  <ul class="gutter rooms__list" data-reveal-group>
+  <ul class="gutter rooms__list">
     {
       ROOMS.map((room, i) => (
-        <li class:list={['room', i % 2 === 1 && 'room--flip']} data-reveal>
+        <li class:list={['room', i % 2 === 1 && 'room--flip']}>
           <div class="room__media">
             <PhotoCarousel photos={room.photos} label={t(`room.${room.key}.name`)} id={room.key} />
           </div>
@@ -57,7 +57,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     }
   </ul>
 
-  <p class="gutter rooms__note" data-reveal>{t('rooms.note')}</p>
+  <p class="gutter rooms__note">{t('rooms.note')}</p>
 </section>
 
 <style>

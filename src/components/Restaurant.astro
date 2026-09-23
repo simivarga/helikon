@@ -25,7 +25,7 @@ const stats = [
 ---
 
 <section id="restaurant" aria-labelledby="restaurant-title" class="restaurant section-light">
-  <div class="gutter restaurant__grid" data-reveal-group>
+  <div class="gutter restaurant__grid">
     <div class="restaurant__media">
       <div class="restaurant__figure restaurant__figure--tall" data-reveal="mask">
         <PhotoCarousel photos={foodPhotos} label={t('restaurant.title')} id="food" sizes="(max-width: 560px) 90vw, (max-width: 900px) 45vw, 24vw" />
@@ -38,7 +38,7 @@ const stats = [
     <div class="restaurant__copy">
       <SectionHead headingId="restaurant-title" eyebrow={t('restaurant.eyebrow')} title={t('restaurant.title')} lede={t('restaurant.body')} />
 
-      <div class="restaurant__actions" data-reveal>
+      <div class="restaurant__actions">
         <a href={FACTS.menuPdf} target="_blank" rel="noopener" class="btn btn-dark">{t('restaurant.menuCta')}</a>
         <a href={`tel:${FACTS.phone}`} class="btn btn-quiet">{t('restaurant.tableCta')}</a>
       </div>
@@ -46,7 +46,7 @@ const stats = [
       <dl class="restaurant__stats">
         {
           stats.map((s) => (
-            <div data-reveal>
+            <div>
               <dt>{s.label}</dt>
               <dd>{s.value}</dd>
             </div>

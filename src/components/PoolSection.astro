@@ -41,16 +41,16 @@ const stats = [
 
   <div class="gutter pool__inner">
     <div class="pool__top">
-    <div class="pool__copy" data-reveal-group>
-      <p class="eyebrow pool__eyebrow" data-reveal>{t('pool.eyebrow')}</p>
-      <h2 class="pool__title" id="pool-title" data-reveal>{t('pool.title')}</h2>
-      <p class="pool__lede" data-reveal>{t('pool.body')}</p>
-      <p class="pool__free" data-reveal>{t('pool.free')}</p>
+    <div class="pool__copy">
+      <p class="eyebrow pool__eyebrow">{t('pool.eyebrow')}</p>
+      <h2 class="pool__title" id="pool-title">{t('pool.title')}</h2>
+      <p class="pool__lede">{t('pool.body')}</p>
+      <p class="pool__free">{t('pool.free')}</p>
     </div>
 
       <!-- Ground-level shots at golden hour: the aerial shows the shape of the
            pool, these show what it is actually like to sit beside it. -->
-      <div class="pool__shots" data-reveal-group>
+      <div class="pool__shots">
         <figure class="pool__shot zoom-figure" data-reveal="mask">
           <Image src={poolGround} alt={t('pool.cap.morning')} widths={[360, 560, 760]} sizes="(max-width: 900px) 45vw, 22vw" loading="lazy" />
           <figcaption class="photo-caption">{t('pool.cap.morning')}</figcaption>
@@ -62,10 +62,10 @@ const stats = [
       </div>
     </div>
 
-    <dl class="pool__stats" data-reveal-group>
+    <dl class="pool__stats">
       {
         stats.map((s) => (
-          <div class="pool__stat" data-reveal>
+          <div class="pool__stat">
             <dt>{s.label}</dt>
             <dd>
               <span class="pool__stat-value">{s.value}</span>

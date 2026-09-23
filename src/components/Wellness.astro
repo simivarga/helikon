@@ -16,7 +16,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     <Image src={wellnessBg} alt="" widths={[900, 1400, 1800]} sizes="100vw" loading="lazy" class="wellness__bg-img" data-parallax="0.05" />
   </div>
 
-  <div class="gutter wellness__grid" data-reveal-group>
+  <div class="gutter wellness__grid">
     <!-- The salt-room photo is only 445px wide at source, so it is shown at
          roughly native size in a portrait frame rather than blown up. -->
     <figure class="wellness__figure zoom-figure" data-reveal="mask">
@@ -27,7 +27,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
       <SectionHead headingId="wellness-title" eyebrow={t('wellness.eyebrow')} title={t('wellness.title')} lede={t('wellness.lede')} />
 
       <div class="wellness__cards">
-        <article class="wellness__card" data-reveal>
+        <article class="wellness__card">
           <h3>{t('wellness.salt.name')}</h3>
           <p>{t('wellness.salt.desc')}</p>
           <dl class="wellness__meta">
@@ -46,7 +46,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
           </dl>
         </article>
 
-        <article class="wellness__card" data-reveal>
+        <article class="wellness__card">
           <h3>{t('wellness.sauna.name')}</h3>
           <p>{t('wellness.sauna.desc')}</p>
           <a href={`tel:${FACTS.phone}`} class="wellness__link">
