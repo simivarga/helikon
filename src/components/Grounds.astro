@@ -15,12 +15,12 @@ const t = useTranslations(locale);
 // Every source photo here is a 1280×1280 square, so the tiles are square too:
 // the previous mixed row-spans forced hard crops that cut the subjects in half.
 const tiles = [
-  { image: parkBridge, alt: t('grounds.alt.bridge') },
-  { image: parkPath, alt: t('grounds.alt.path') },
-  { image: gazebos, alt: t('grounds.alt.gazebos') },
-  { image: monument, alt: t('grounds.alt.monument') },
-  { image: restaurantTerrace, alt: t('grounds.alt.terrace') },
-  { image: billiards, alt: t('grounds.alt.billiards') },
+  { image: parkBridge, alt: t('grounds.alt.bridge'), cap: t('grounds.cap.bridge') },
+  { image: parkPath, alt: t('grounds.alt.path'), cap: t('grounds.cap.path') },
+  { image: gazebos, alt: t('grounds.alt.gazebos'), cap: t('grounds.cap.gazebos') },
+  { image: monument, alt: t('grounds.alt.monument'), cap: t('grounds.cap.monument') },
+  { image: restaurantTerrace, alt: t('grounds.alt.terrace'), cap: t('grounds.cap.terrace') },
+  { image: billiards, alt: t('grounds.alt.billiards'), cap: t('grounds.cap.billiards') },
 ];
 ---
 
@@ -40,7 +40,9 @@ const tiles = [
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 30vw"
             loading="lazy"
           />
-          <figcaption class="photo-caption">{tile.alt}</figcaption>
+          {/* A short caption, separate from the alt text: on a 155px phone tile the
+              full description wrapped to five lines and covered the photo. */}
+          <figcaption class="photo-caption">{tile.cap}</figcaption>
         </figure>
       ))
     }

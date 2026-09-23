@@ -125,6 +125,21 @@ const stats = [
       linear-gradient(to right, oklch(0.16 0.05 139.5 / 0.55) 0%, oklch(0.16 0.05 139.5 / 0.1) 52%, transparent 78%);
   }
 
+  /* On phones the copy runs up into the part of the photo the desktop
+     gradient leaves open, and the heading's second line landed on the bright
+     stone edging of the pool (measured 1.9:1). Keep the whole copy area dark. */
+  @media (max-width: 699px) {
+    .pool::after {
+      background: linear-gradient(
+        to top,
+        oklch(0.16 0.05 139.5 / 0.94) 0%,
+        oklch(0.16 0.05 139.5 / 0.82) 35%,
+        oklch(0.16 0.05 139.5 / 0.72) 75%,
+        oklch(0.16 0.05 139.5 / 0.6) 100%
+      );
+    }
+  }
+
   /* The lead-in is what lets the pool read as a photograph before the copy
      starts. Tuned so the section lands near one screen on a laptop. */
   .pool__inner {
@@ -187,6 +202,7 @@ const stats = [
     margin-top: 1.1rem;
     font-size: var(--text-display-sm);
     max-width: 20ch;
+    text-shadow: 0 1px 3px oklch(0.16 0.05 139.5 / 0.55), 0 2px 28px oklch(0.16 0.05 139.5 / 0.7);
   }
 
   .pool__lede {
