@@ -67,9 +67,9 @@ export const ui: Record<Locale, Dict> = {
   uk: {
     'site.name': 'Гелікон',
     'site.tagline': 'Готель · Ресторан · Сауна',
-    'site.title': 'Готель Гелікон, Закарпаття — басейн, сауна, ресторан у Яноші',
+    'site.title': 'Готель Гелікон у Яноші, Закарпаття: басейн, сауна, ресторан',
     'site.description':
-      'Готель «Гелікон» на Закарпатті — у Яноші, за 6 км від Берегового. Підігрітий басейн, сауна, соляна кімната, закарпатська кухня та зали для подій.',
+      'Готель «Гелікон» у Яноші на Закарпатті, за 6 км від Берегового. Підігрітий басейн, сауна, соляна кімната, закарпатська кухня та зали для подій.',
 
     'nav.rooms': 'Номери',
     'nav.pool': 'Басейн',
@@ -86,7 +86,7 @@ export const ui: Record<Locale, Dict> = {
     'carousel.photo': 'Фото',
 
     'hero.eyebrow': 'Яноші · Закарпаття',
-    'hero.title': 'Втілення гостинності та смаку в серці природи',
+    'hero.title': 'Родинний готель із підігрітим басейном біля Берегового',
     'hero.rating': 'на Booking.com',
     'hero.reviews.one': 'відгук',
     'hero.reviews.few': 'відгуки',
@@ -98,11 +98,11 @@ export const ui: Record<Locale, Dict> = {
     'hero.imageAlt': 'Парк готелю Гелікон із містком через ставок',
 
     'welcome.eyebrow': 'Ласкаво просимо',
-    'welcome.title': 'Родинний готель, який росте разом із гостями',
+    'welcome.title': 'Готель, який росте разом із гостями',
     'welcome.body1':
-      'Гелікон стоїть у Яноші, за шість кілометрів від Берегового, просто біля дороги на кордон. Починали ми з дев’ятнадцяти номерів — сьогодні їх шістдесят три, а поруч виріс парк зі ставком, містком і альтанками.',
+      'Гелікон стоїть у Яноші, за шість кілометрів від Берегового, просто біля дороги на кордон. Починали ми з дев’ятнадцяти номерів, а сьогодні їх шістдесят три. Поруч виріс парк зі ставком, містком і альтанками.',
     'welcome.body2':
-      'Тут зупиняються родини, компанії друзів і ті, хто їде далі через кордон. Сніданок входить у вартість, паркування безкоштовне, а до басейну й соляної кімнати — хвилина пішки.',
+      'Тут зупиняються родини, компанії друзів і ті, хто їде далі через кордон. Сніданок входить у вартість, паркування безкоштовне, а до басейну й соляної кімнати можна дійти за хвилину.',
     'welcome.stat.rooms': 'номерів',
     'welcome.stat.stars': 'зірки',
     'welcome.stat.years': 'років',
@@ -113,8 +113,8 @@ export const ui: Record<Locale, Dict> = {
     'pool.eyebrow': 'Новинка від 2025 року',
     'pool.title': 'Басейн, у якому справді можна плавати',
     'pool.body':
-      'Вода нагрівається двома тепловими насосами, що працюють від сонячних батарей, тож купатися комфортно з початку літа до середини жовтня. Глибша частина — півтора метра: тут плавають, а не просто хлюпаються.',
-    'pool.free': 'Для гостей готелю — безкоштовно',
+      'Вода нагрівається двома тепловими насосами, що працюють від сонячних батарей, тож купатися комфортно з початку літа до середини жовтня. У глибшій частині басейну півтора метра води, тому тут плавають, а не просто хлюпаються.',
+    'pool.free': 'Безкоштовно для гостей готелю',
     'pool.imageAlt': 'Підігрітий басейн готелю Гелікон з висоти пташиного польоту',
     'pool.cap.morning': 'Ранок біля басейну',
     'pool.cap.loungers': 'Шезлонги та парасолі',
@@ -127,7 +127,7 @@ export const ui: Record<Locale, Dict> = {
     'rooms.eyebrow': 'Проживання',
     'rooms.title': 'Шість типів номерів',
     'rooms.lede':
-      'Від мансарди з вікном у небо до двокімнатного сімейного номера. У кожному — кондиціонер, власна ванна кімната, телевізор і безкоштовний Wi-Fi.',
+      'Від мансарди з вікном у небо до двокімнатного сімейного номера. У кожному є кондиціонер, власна ванна кімната, телевізор і безкоштовний Wi-Fi.',
     'rooms.from': 'від',
     'rooms.night': 'за ніч',
     'rooms.details': 'Детальніше',
@@ -139,15 +139,15 @@ export const ui: Record<Locale, Dict> = {
     'cap4': 'до 4 осіб',
 
     'room.mansard.name': 'Мансард',
-    'room.mansard.desc': 'Номер під дахом із вікном у небо — тихо й затишно.',
+    'room.mansard.desc': 'Тихий і затишний номер під дахом, із вікном у небо.',
     'room.standard.name': 'Стандарт двомісний',
-    'room.standard.desc': 'Світлий номер із балконом — для пари або для поїздки у справах.',
+    'room.standard.desc': 'Світлий номер із балконом для пари або для ділової поїздки.',
     'room.standard3.name': 'Стандарт тримісний',
     'room.standard3.desc': 'Просторий номер для друзів або невеликої родини.',
     'room.half_lux.name': 'Напівлюкс',
     'room.half_lux.desc': 'Більше місця та власне патіо, комфортно для двох.',
     'room.lux.name': 'Люкс однокімнатний',
-    'room.lux.desc': 'Однокімнатний люкс до чотирьох осіб — із додатковим простором.',
+    'room.lux.desc': 'Просторий однокімнатний люкс, розрахований до чотирьох осіб.',
     'room.family.name': 'Сімейний двокімнатний',
     'room.family.desc': 'Дві окремі кімнати, щоб усім вистачило місця.',
 
@@ -163,7 +163,7 @@ export const ui: Record<Locale, Dict> = {
     'restaurant.eyebrow': 'Ресторан',
     'restaurant.title': 'Угорська кухня, як удома',
     'restaurant.body':
-      'Готуємо закарпатські та угорські страви зі свіжих місцевих продуктів. Сніданок — накритий стіл із теплими стравами, сирами й фруктами — входить у вартість номера. Гарячі страви подаємо до вечора — у залі на триста гостей.',
+      'Готуємо закарпатські та угорські страви зі свіжих місцевих продуктів. Сніданок входить у вартість номера: зранку накриваємо стіл із теплими стравами, сирами й фруктами. Гарячі страви подаємо до вечора в залі на триста гостей.',
     'restaurant.menuCta': 'Переглянути меню',
     'restaurant.tableCta': 'Забронювати стіл',
     'restaurant.stat.seats': 'місць у залі',
@@ -177,11 +177,11 @@ export const ui: Record<Locale, Dict> = {
     'wellness.lede': 'Дві причини не виїжджати з території навіть у дощ.',
     'wellness.sauna.name': 'Сауна',
     'wellness.sauna.desc':
-      'Фінська та інфрачервона сауна з басейном для контрастного занурення. Працює за попереднім бронюванням — запитуйте за телефоном.',
+      'Фінська та інфрачервона сауна з басейном для контрастного занурення. Працює за попереднім бронюванням, про ціну питайте телефоном.',
     'wellness.sauna.cta': 'Забронювати сауну',
     'wellness.salt.name': 'Соляна кімната',
     'wellness.salt.desc':
-      'Сеанс у соляній кімнаті допомагає легше дихати — особливо дітям після простуди.',
+      'Сеанс у соляній кімнаті допомагає легше дихати, особливо дітям після застуди.',
     'wellness.salt.duration': 'Тривалість',
     'wellness.salt.price': 'Сеанс',
     'wellness.salt.pass': 'Абонемент',
@@ -190,13 +190,13 @@ export const ui: Record<Locale, Dict> = {
     'events.eyebrow': 'Події',
     'events.title': 'Весілля, конференції, родинні свята',
     'events.lede':
-      'Перше весілля ми провели у 2014 році, відтоді їх були сотні. До ваших послуг — власна кухня, номери для гостей і паркування на території.',
+      'Перше весілля ми провели у 2014 році, відтоді їх були сотні. Разом із залом ви отримуєте нашу кухню, номери для гостей і паркування на території.',
     'events.banquet.name': 'Банкетна зала',
     'events.banquet.desc':
       'Велика зала для весіль і ювілеїв: сцена, світло, окремий вхід. Меню складаємо разом із вами.',
     'events.conf.name': 'Конференц-зали',
     'events.conf.desc':
-      'Зали для навчань, презентацій і корпоративних зустрічей — з проєктором, звуком і кава-паузами з нашої кухні.',
+      'Зали для навчань, презентацій і корпоративних зустрічей. Є проєктор і звук, а кава-паузи готує наша кухня.',
     'events.banquet.tableAlt': 'Накритий стіл у банкетній залі готелю Гелікон',
     'events.cta': 'Запитати про зал',
     'events.callLabel': 'Телефон для подій',
@@ -217,9 +217,9 @@ export const ui: Record<Locale, Dict> = {
     'story.eyebrow': 'Наша історія',
     'story.title': 'Від зачиненого будинку до шістдесяти трьох номерів',
     'story.body1':
-      'У 2004 році Тібор Біро взяв в оренду закинуту будівлю колишнього ресторану в Яноші. За рік тут відкрився готель — спершу на дев’ятнадцять номерів.',
+      'У 2004 році Тібор Біро взяв в оренду закинуту будівлю колишнього ресторану в Яноші. За рік тут відкрився готель, спершу на дев’ятнадцять номерів.',
     'story.body2':
-      'Розширення припало на 2014 рік, коли туризм завмер. Будівництво все одно довели до кінця — і того ж року провели перше весілля. Сьогодні готелем родина опікується разом із доньками Діаною та Дороттею та їхніми сім’ями.',
+      'Розширення припало на 2014 рік, коли туризм завмер. Будівництво все одно довели до кінця, і того ж року провели перше весілля. Сьогодні готель веде Тібор Біро разом із доньками, Діаною та Дороттею, та їхніми сім’ями.',
     'story.q1': '2004',
     'story.q1label': 'Орендували будівлю',
     'story.q2': '2005',
@@ -243,9 +243,9 @@ export const ui: Record<Locale, Dict> = {
     'contact.mapsCta': 'Відкрити в Google Картах',
     'contact.directionsCta': 'Прокласти маршрут',
     'contact.borderNote':
-      'Тихе село за шість кілометрів від Берегового. Термальні купальні, винні погреби та замки — усе поруч.',
+      'Тихе село за шість кілометрів від Берегового. Поруч є термальні купальні, винні погреби та замки.',
 
-    'footer.tagline': 'Готель, ресторан і сауна в Яноші, у серці закарпатської природи.',
+    'footer.tagline': 'Готель, ресторан і сауна в Яноші, за 6 км від Берегового.',
     'footer.explore': 'Розділи',
     'footer.contactCol': 'Контакти',
     'footer.followCol': 'Ми в мережі',
@@ -258,7 +258,7 @@ export const ui: Record<Locale, Dict> = {
   hu: {
     'site.name': 'Helikon',
     'site.tagline': 'Szálloda · Étterem · Szauna',
-    'site.title': 'Hotel Helikon Kárpátalja — medencés szálloda Beregszász mellett',
+    'site.title': 'Hotel Helikon: medencés szálloda Beregszász mellett, Kárpátalján',
     'site.description':
       'Hotel Helikon Kárpátalján: szálloda, étterem és szauna Makkosjánosiban, Beregszásztól 6 km-re. Fűtött medence, sószoba, magyar konyha, rendezvénytermek. Nem a keszthelyi Hotel Helikon.',
 
@@ -277,7 +277,7 @@ export const ui: Record<Locale, Dict> = {
     'carousel.photo': 'Fénykép',
 
     'hero.eyebrow': 'Makkosjánosi · Kárpátalja',
-    'hero.title': 'Vendégszeretet és jó ízek a természet ölelésében',
+    'hero.title': 'Családi szálloda fűtött medencével Beregszász mellett',
     'hero.rating': 'a Booking.com-on',
     'hero.reviews.one': 'értékelés',
     'hero.reviews.few': 'értékelés',
@@ -289,7 +289,7 @@ export const ui: Record<Locale, Dict> = {
     'hero.imageAlt': 'A Helikon parkja a tavon átvezető kishíddal',
 
     'welcome.eyebrow': 'Üdvözlünk',
-    'welcome.title': 'Családi szálloda, ami a vendégeivel együtt nőtt',
+    'welcome.title': 'Szálloda, amely a vendégeivel együtt nőtt',
     'welcome.body1':
       'A Helikon Makkosjánosiban áll, Beregszásztól hat kilométerre, közvetlenül a határ felé vezető út mellett. Tizenkilenc szobával kezdtük, ma hatvanhárom van, és közben kinőtt mellé a park a tavacskával, a kishíddal és a filagóriákkal.',
     'welcome.body2':
@@ -301,7 +301,7 @@ export const ui: Record<Locale, Dict> = {
     'welcome.stat.breakfast': 'Reggeli',
     'welcome.stat.breakfastValue': 'az árban',
 
-    'pool.eyebrow': 'Új — 2025 óta',
+    'pool.eyebrow': 'Újdonság 2025 óta',
     'pool.title': 'Medence, amiben tényleg lehet úszni',
     'pool.body':
       'A vizet két napelemes hőszivattyú fűti, így a nyár elejétől október közepéig kellemes a fürdés. A mélyebbik rész másfél méter: itt úszni lehet, nem csak pancsolni.',
@@ -330,7 +330,7 @@ export const ui: Record<Locale, Dict> = {
     'cap4': '4 főig',
 
     'room.mansard.name': 'Manzárd',
-    'room.mansard.desc': 'Tetőtéri szoba tetőablakkal — csendes és otthonos.',
+    'room.mansard.desc': 'Csendes, otthonos tetőtéri szoba tetőablakkal.',
     'room.standard.name': 'Kétágyas standard',
     'room.standard.desc': 'Világos szoba erkéllyel, pároknak vagy üzleti úton érkezőknek.',
     'room.standard3.name': 'Háromágyas standard',
@@ -354,7 +354,7 @@ export const ui: Record<Locale, Dict> = {
     'restaurant.eyebrow': 'Étterem',
     'restaurant.title': 'Magyar konyha, ahogy otthon',
     'restaurant.body':
-      'Kárpátaljai és magyar fogásokat készítünk friss, helyi alapanyagokból. A reggeli — meleg ételekkel, sajtokkal, gyümölccsel megrakott asztal — a szoba árában van. Meleg ételt estig kérhetsz, a háromszáz fős étteremben.',
+      'Kárpátaljai és magyar fogásokat készítünk friss, helyi alapanyagokból. A reggeli benne van a szoba árában: meleg ételekkel, sajtokkal és gyümölccsel megrakott asztal vár. Meleg ételt estig kérhetsz a háromszáz fős étteremben.',
     'restaurant.menuCta': 'Étlap megnyitása',
     'restaurant.tableCta': 'Asztalfoglalás',
     'restaurant.stat.seats': 'fős étterem',
@@ -372,7 +372,7 @@ export const ui: Record<Locale, Dict> = {
     'wellness.sauna.cta': 'Szaunát foglalok',
     'wellness.salt.name': 'Sószoba',
     'wellness.salt.desc':
-      'Egy sószobai ülés könnyebbé teszi a légzést — a gyerekeknek különösen jót tesz megfázás után.',
+      'A sószobában töltött ülés után könnyebb a légzés, megfázás után főleg a gyerekeknek tesz jót.',
     'wellness.salt.duration': 'Időtartam',
     'wellness.salt.price': 'Egy ülés',
     'wellness.salt.pass': 'Bérlet',
@@ -387,7 +387,7 @@ export const ui: Record<Locale, Dict> = {
       'Nagy terem esküvőkre és jubileumokra: színpad, világítás, külön bejárat. A menüt közösen állítjuk össze.',
     'events.conf.name': 'Konferenciatermek',
     'events.conf.desc':
-      'Termek képzésekhez, prezentációkhoz és céges találkozókhoz — projektorral, hangosítással és kávészünettel a saját konyhánkról.',
+      'Termek képzésekhez, prezentációkhoz és céges megbeszélésekhez. Van projektor és hangosítás, a kávészünetet pedig a saját konyhánk készíti.',
     'events.banquet.tableAlt': 'Terített asztal a Helikon bankett-termében',
     'events.cta': 'Érdeklődöm a teremről',
     'events.callLabel': 'Rendezvények telefonon',
@@ -408,7 +408,7 @@ export const ui: Record<Locale, Dict> = {
     'story.eyebrow': 'A történetünk',
     'story.title': 'Egy bezárt épülettől hatvanhárom szobáig',
     'story.body1':
-      '2004-ben Bíró Tibor kivette bérbe a makkosjánosi egykori étterem elhagyott épületét. Egy évvel később már szálloda működött benne — először tizenkilenc szobával.',
+      '2004-ben Bíró Tibor bérbe vette a makkosjánosi egykori étterem elhagyott épületét. Egy évvel később már szálloda működött benne, eleinte tizenkilenc szobával.',
     'story.body2':
       'A bővítés 2014-re esett, amikor a turizmus leállt. Az építkezést mégis végigvitték, és még abban az évben megtartották az első esküvőt. Ma a szállodát a család vezeti: Bíró Tibor a lányaival, Dianával és Dorottyával, valamint az ő családjaikkal együtt.',
     'story.q1': '2004',
@@ -436,7 +436,7 @@ export const ui: Record<Locale, Dict> = {
     'contact.borderNote':
       'Csendes falu Beregszásztól hat kilométerre. Termálfürdők, borospincék és várak is mind a közelben vannak.',
 
-    'footer.tagline': 'Szálloda, étterem és szauna Makkosjánosiban, a kárpátaljai természet szívében.',
+    'footer.tagline': 'Szálloda, étterem és szauna Makkosjánosiban, Beregszásztól 6 km-re.',
     'footer.explore': 'Tartalom',
     'footer.contactCol': 'Kapcsolat',
     'footer.followCol': 'Kövess minket',
@@ -449,9 +449,9 @@ export const ui: Record<Locale, Dict> = {
   en: {
     'site.name': 'Helikon',
     'site.tagline': 'Hotel · Restaurant · Sauna',
-    'site.title': 'Hotel Helikon Transcarpathia — pool and sauna hotel in Ukraine',
+    'site.title': 'Hotel Helikon: pool and sauna hotel in Transcarpathia, Ukraine',
     'site.description':
-      'Hotel Helikon in Transcarpathia, Ukraine — in Jánosi, 6 km from Berehove. Heated pool, sauna, salt room, Transcarpathian-Hungarian cooking and event halls.',
+      'Hotel Helikon in Jánosi, Transcarpathia, Ukraine, 6 km from Berehove. Heated pool, sauna, salt room, Transcarpathian-Hungarian cooking and event halls.',
 
     'nav.rooms': 'Rooms',
     'nav.pool': 'Pool',
@@ -468,7 +468,7 @@ export const ui: Record<Locale, Dict> = {
     'carousel.photo': 'Photo',
 
     'hero.eyebrow': 'Jánosi · Transcarpathia',
-    'hero.title': 'Hospitality and good taste in the heart of nature',
+    'hero.title': 'Family hotel with a heated pool near Berehove',
     'hero.rating': 'on Booking.com',
     'hero.reviews.one': 'review',
     'hero.reviews.few': 'reviews',
@@ -480,7 +480,7 @@ export const ui: Record<Locale, Dict> = {
     'hero.imageAlt': 'The Helikon park with the little bridge over the pond',
 
     'welcome.eyebrow': 'Welcome',
-    'welcome.title': 'A family hotel that grew with its guests',
+    'welcome.title': 'A hotel that grew with its guests',
     'welcome.body1':
       'Helikon stands in Jánosi, six kilometres from Berehove, right on the road to the Hungarian border. We started with nineteen rooms; today there are sixty-three, and a park has grown beside them with a pond, a little bridge and picnic gazebos.',
     'welcome.body2':
@@ -521,7 +521,7 @@ export const ui: Record<Locale, Dict> = {
     'cap4': 'up to 4 guests',
 
     'room.mansard.name': 'Mansard',
-    'room.mansard.desc': 'An attic room with a skylight — quiet and homely.',
+    'room.mansard.desc': 'A quiet, homely attic room with a skylight.',
     'room.standard.name': 'Standard double',
     'room.standard.desc': 'A bright room with a balcony, for couples or business trips.',
     'room.standard3.name': 'Standard triple',
@@ -545,7 +545,7 @@ export const ui: Record<Locale, Dict> = {
     'restaurant.eyebrow': 'Restaurant',
     'restaurant.title': 'Hungarian cooking, the way you would make it at home',
     'restaurant.body':
-      'We cook Transcarpathian and Hungarian dishes using fresh local ingredients. Breakfast — a table set with warm dishes, cheeses and fruit — comes with the room. For everything else, a three-hundred-seat dining room stays open into the evening.',
+      'We cook Transcarpathian and Hungarian dishes using fresh local ingredients. Breakfast comes with the room: a table set with warm dishes, cheeses and fruit. Hot meals are served into the evening in our three-hundred-seat dining room.',
     'restaurant.menuCta': 'Open the menu',
     'restaurant.tableCta': 'Book a table',
     'restaurant.stat.seats': 'seats',
@@ -559,11 +559,11 @@ export const ui: Record<Locale, Dict> = {
     'wellness.lede': 'Two reasons not to leave the grounds even when it rains.',
     'wellness.sauna.name': 'Sauna',
     'wellness.sauna.desc':
-      'Finnish and infrared saunas with a plunge pool. Available by arrangement — call us for prices.',
+      'Finnish and infrared saunas with a plunge pool. Available by arrangement, so call ahead and ask us for prices.',
     'wellness.sauna.cta': 'Book the sauna',
     'wellness.salt.name': 'Salt room',
     'wellness.salt.desc':
-      'A session in the salt room makes breathing easier — children especially benefit after a cold.',
+      'A session in the salt room makes breathing easier, especially for children getting over a cold.',
     'wellness.salt.duration': 'Duration',
     'wellness.salt.price': 'One session',
     'wellness.salt.pass': 'Pass',
@@ -578,7 +578,7 @@ export const ui: Record<Locale, Dict> = {
       'A large hall for weddings and anniversaries: stage, lighting, its own entrance. We build the menu together with you.',
     'events.conf.name': 'Conference halls',
     'events.conf.desc':
-      'Halls for training, presentations and company meetings — with a projector, sound, and coffee breaks from our kitchen.',
+      'Halls for training, presentations and company meetings, with a projector, a sound system and coffee breaks from our kitchen.',
     'events.banquet.tableAlt': 'A laid table in the banquet hall at Hotel Helikon',
     'events.cta': 'Ask about a hall',
     'events.callLabel': 'Call about events',
@@ -599,7 +599,7 @@ export const ui: Record<Locale, Dict> = {
     'story.eyebrow': 'Our story',
     'story.title': 'From a shuttered building to sixty-three rooms',
     'story.body1':
-      'In 2004 Tibor Bíró took on the lease of an abandoned former restaurant in Jánosi. A year later it opened as a hotel — nineteen rooms to start with.',
+      'In 2004 Tibor Bíró took on the lease of an abandoned former restaurant in Jánosi. A year later it opened as a hotel with nineteen rooms.',
     'story.body2':
       'The expansion came in 2014, just as tourism stopped. The building was finished anyway, and the first wedding was held that same year. Today the hotel is run together with his daughters, Diana and Dorottya, and their families.',
     'story.q1': '2004',
@@ -627,7 +627,7 @@ export const ui: Record<Locale, Dict> = {
     'contact.borderNote':
       'A quiet village six kilometres from Berehove. Thermal baths, wine cellars and castles are all close by.',
 
-    'footer.tagline': 'Hotel, restaurant and sauna in Jánosi — in the heart of Transcarpathian nature.',
+    'footer.tagline': 'Hotel, restaurant and sauna in Jánosi, 6 km from Berehove.',
     'footer.explore': 'Explore',
     'footer.contactCol': 'Contact',
     'footer.followCol': 'Follow us',
