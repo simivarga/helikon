@@ -45,7 +45,7 @@ const t = useTranslations(locale);
         </div>
       </dl>
 
-      <div class="contact__actions">
+      <div class="contact__actions" data-btn-row>
         <a href={`tel:${FACTS.phone}`} class="btn btn-gold">{t('contact.callCta')}</a>
         <a href={FACTS.whatsapp} target="_blank" rel="noopener" class="btn btn-outline">WhatsApp</a>
         <a href={FACTS.viber} class="btn btn-outline">Viber</a>
@@ -79,7 +79,7 @@ const t = useTranslations(locale);
         <p class="location__eyebrow">Helikon</p>
         <h3 class="location__title">{t('hero.eyebrow')}</h3>
         <p class="location__note">{t('contact.borderNote')}</p>
-        <div class="location__actions">
+        <div class="location__actions" data-btn-row>
           <a href={FACTS.maps} target="_blank" rel="noopener" class="btn btn-gold">{t('contact.mapsCta')}</a>
           <a href={FACTS.directions} target="_blank" rel="noopener" class="btn btn-outline">{t('contact.directionsCta')}</a>
         </div>

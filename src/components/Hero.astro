@@ -60,7 +60,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
       <span>{`${formatNumber(locale, FACTS.ratingCount)} ${reviewNoun} ${t('hero.rating')}`}</span>
     </div>
 
-    <div class="hero__actions" style="--d:0.3s">
+    <div class="hero__actions" data-btn-row style="--d:0.3s">
       <a href={FACTS.booking} target="_blank" rel="noopener" class="btn btn-gold">{t('hero.cta.book')}</a>
       <a href="#rooms" class="btn btn-outline">{t('hero.cta.rooms')}</a>
     </div>

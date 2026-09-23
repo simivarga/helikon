@@ -27,24 +27,26 @@ const schema = {
 ---
 
 <section id="faq" aria-labelledby="faq-title" class="faq section-light">
-  <div class="gutter faq__grid" data-reveal-group>
+  <div class="gutter faq__grid">
     <div class="faq__head">
       <SectionHead headingId="faq-title" title={copy.title} />
-      <p class="faq__more" data-reveal>
+      <p class="faq__more">
         {copy.more}{' '}
         <a href="#contact">{copy.moreCta}</a>
       </p>
     </div>
 
-    <div class="faq__list">
+    <div class="faq__list" data-faq>
       {
         copy.items.map((item) => (
-          <details class="faq__item" data-reveal>
+          <details class="faq__item">
             <summary class="faq__q">
               <span>{item.q}</span>
               <span class="faq__icon" aria-hidden="true" />
             </summary>
-            <p class="faq__a">{item.a}</p>
+            <div class="faq__panel">
+              <p class="faq__a">{item.a}</p>
+            </div>
           </details>
         ))
       }
@@ -95,9 +97,6 @@ const schema = {
 
   .faq__item {
     border-top: 1px solid color-mix(in oklab, var(--color-forest-900) 16%, transparent);
-    /* Lets the answer's height animate where the browser supports it; others
-       simply open instantly. */
-    interpolate-size: allow-keywords;
   }
 
   .faq__item:last-child {
@@ -155,11 +154,24 @@ const schema = {
     transform: translate(-50%, -50%) rotate(90deg);
   }
 
-  .faq__item[open] .faq__icon::after {
+  .faq__item[open] .faq__icon::after,
+  .faq__item.is-open .faq__icon::after {
     transform: translate(-50%, -50%) rotate(0deg);
   }
 
-  .faq__item::details-content {
+  /* Once the script has taken over, the icon follows .is-open, which flips at
+     the start of a close rather than when the panel has finished folding. */
+  [data-faq][data-enhanced] .faq__item[open]:not(.is-open) .faq__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  /* Without the script: Chromium 131+ can still ease the height natively;
+     Safari and Firefox open instantly, which is the correct fallback. */
+  [data-faq]:not([data-enhanced]) .faq__item {
+    interpolate-size: allow-keywords;
+  }
+
+  [data-faq]:not([data-enhanced]) .faq__item::details-content {
     block-size: 0;
     overflow: hidden;
     transition:
@@ -167,8 +179,12 @@ const schema = {
       content-visibility 0.5s allow-discrete;
   }
 
-  .faq__item[open]::details-content {
+  [data-faq]:not([data-enhanced]) .faq__item[open]::details-content {
     block-size: auto;
+  }
+
+  .faq__panel {
+    overflow: hidden;
   }
 
   .faq__a {
@@ -184,3 +200,70 @@ const schema = {
     }
   }
 </style>
+
+<script>
+  // Height animation for <details>, the same in every engine. The native element
+  // still owns open/closed state, keyboard access and find-in-page; the script
+  // only animates the panel between those states.
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+  document.querySelectorAll<HTMLElement>('[data-faq]').forEach((list) => {
+    list.dataset.enhanced = '';
+
+    list.querySelectorAll<HTMLDetailsElement>('.faq__item').forEach((item) => {
+      const summary = item.querySelector('summary');
+      const panel = item.querySelector<HTMLElement>('.faq__panel');
+      if (!summary || !panel) return;
+
+      let running: Animation | null = null;
+      item.classList.toggle('is-open', item.open);
+
+      const animate = (from: number, to: number, duration: number, onDone?: () => void) => {
+        running?.cancel();
+        running = panel.animate(
+          [
+            { height: `${from}px`, opacity: from === 0 ? 0 : 1 },
+            { height: `${to}px`, opacity: to === 0 ? 0 : 1 },
+          ],
+          { duration, easing: EASE },
+        );
+        running.onfinish = () => {
+          running = null;
+          onDone?.();
+        };
+      };
+
+      summary.addEventListener('click', (event) => {
+        if (reduced.matches) return;
+        event.preventDefault();
+
+        // Mid-animation, start from the height it has right now so the motion
+        // reverses instead of jumping. Otherwise start from the resting state:
+        // a closed panel's measured height is stale, not 0, in every engine.
+        const current = running
+          ? panel.getBoundingClientRect().height
+          : item.classList.contains('is-open')
+            ? panel.scrollHeight
+            : 0;
+
+        if (!item.classList.contains('is-open')) {
+          item.open = true;
+          item.classList.add('is-open');
+          animate(current, panel.scrollHeight, 480);
+        } else {
+          item.classList.remove('is-open');
+          animate(current, 0, 360, () => {
+            item.open = false;
+          });
+        }
+      });
+
+      // Opened by the browser itself (find-in-page, a hash link): keep the
+      // icon state in step without animating.
+      item.addEventListener('toggle', () => {
+        if (!running) item.classList.toggle('is-open', item.open);
+      });
+    });
+  });
+</script>

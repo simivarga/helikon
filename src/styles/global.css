@@ -416,3 +416,57 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ---- Button rows ----------------------------------------------------------
+   Driven by src/scripts/button-rows.ts, which decides per row whether the
+   labels fit on one line. Unlayered and doubled up on purpose: these must beat
+   the components' own scoped rules for the same rows. */
+[data-btn-row][data-btn-row] {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+[data-btn-row][data-btn-row] > * {
+  flex: 1 1 auto;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Natural width, one line, so the script can read what each label needs. */
+[data-btn-row][data-btn-row].is-measuring {
+  flex-wrap: nowrap;
+}
+[data-btn-row][data-btn-row].is-measuring > * {
+  flex: none;
+  width: max-content;
+  white-space: nowrap;
+}
+
+[data-btn-row][data-btn-row].is-inline {
+  flex-wrap: nowrap;
+}
+[data-btn-row][data-btn-row].is-inline > * {
+  flex: 1 1 0;
+  white-space: nowrap;
+}
+
+[data-btn-row][data-btn-row].is-fluid {
+  flex-wrap: nowrap;
+}
+[data-btn-row][data-btn-row].is-fluid > * {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+[data-btn-row][data-btn-row].is-stacked {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+[data-btn-row][data-btn-row].is-stacked > * {
+  grid-column: 1 / -1;
+}
+/* Three buttons: the primary action on its own line, the two that follow
+   side by side under it. */
+[data-btn-row][data-btn-row].is-stacked > :first-child:nth-last-child(3) ~ * {
+  grid-column: auto;
+}

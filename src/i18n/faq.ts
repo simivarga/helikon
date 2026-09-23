@@ -65,10 +65,6 @@ export const FAQ: Record<Locale, FaqCopy> = {
         q: 'Чи є в готелі ліфт?',
         a: 'Так, ліфт є, тож валізи сходами носити не доведеться.',
       },
-      {
-        q: 'Це той самий «Гелікон», що на Балатоні?',
-        a: 'Ні. Ми готель «Гелікон» у Яноші на Закарпатті, в Україні. Hotel Helikon у Кестгеї на озері Балатон в Угорщині є окремим готелем і з нами не пов’язаний.',
-      },
     ],
   },
   hu: {
@@ -109,10 +105,6 @@ export const FAQ: Record<Locale, FaqCopy> = {
         q: 'Van lift a szállodában?',
         a: 'Igen, van lift, így a csomagjaidat nem kell a lépcsőn cipelned.',
       },
-      {
-        q: 'Ez a keszthelyi Hotel Helikon?',
-        a: 'Nem. Mi a kárpátaljai Hotel Helikon vagyunk Makkosjánosiban, Ukrajnában. A Balaton-parti, keszthelyi Hotel Helikon egy másik szálloda, és nincs kapcsolatunk vele.',
-      },
     ],
   },
   en: {
@@ -152,10 +144,6 @@ export const FAQ: Record<Locale, FaqCopy> = {
       {
         q: 'Is there a lift?',
         a: 'Yes, so you will not have to carry your luggage up the stairs.',
-      },
-      {
-        q: 'Is this the Hotel Helikon at Lake Balaton?',
-        a: 'No. We are Hotel Helikon in Jánosi, Transcarpathia, Ukraine. The Hotel Helikon in Keszthely on Lake Balaton, Hungary, is a separate hotel with no connection to us.',
       },
     ],
   },
