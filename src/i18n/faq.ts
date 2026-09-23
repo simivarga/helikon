@@ -87,7 +87,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Mikor lehet érkezni és távozni?',
-        a: `A szobát ${checkIn}-tól foglalhatod el, és ${checkOut}-ig kell átadnod.`,
+        a: `A szobát ${checkIn}-tól foglalhatod el, és ${checkOut}-ig kell elhagynod.`,
       },
       {
         q: 'Hogyan fizethetek?',
@@ -139,7 +139,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'When is the heated pool open?',
-        a: `The ${poolLength} × ${num('en', FACTS.poolWidth)} m pool is heated to ${poolTempMin}–${poolTempMax} °C by two solar-powered heat pumps. The season starts in summer and runs until about mid-October. The deep end is ${num('en', FACTS.poolDepth)} m, and hotel guests swim free.`,
+        a: `The ${poolLength} × ${num('en', FACTS.poolWidth)} m pool is heated to ${poolTempMin}–${poolTempMax} °C by two solar-powered heat pumps. The season starts in summer and runs until about mid-October. The deep end is ${num('en', FACTS.poolDepth)} m, and it is free for hotel guests.`,
       },
       {
         q: 'Is there a lift?',

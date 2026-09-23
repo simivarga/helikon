@@ -269,7 +269,7 @@ export const legal: Record<Locale, LegalLocale> = {
         {
           heading: 'Kik vagyunk',
           blocks: [
-            { p: 'Az adatkezelő a Hotel Helikon. Az elérhetőségeink:' },
+            { p: 'Az adatkezelő a Hotel Helikon. Elérhetőségeink:' },
             { contact: true },
             { p: 'Ha a személyes adataiddal kapcsolatban bármilyen kérdésed van, írj a {email} címre.' },
           ],
@@ -282,7 +282,7 @@ export const legal: Record<Locale, LegalLocale> = {
               list: [
                 'Nincsenek sütik. Az oldal nem helyez el sütit, és mást sem tárol a böngésződben, ezért sütikről szóló felugró ablakot sem látsz.',
                 'Nincs látogatottságmérés, statisztika, hirdetési pixel vagy más követőkód.',
-                'Nincs űrlap. Az oldalon nem tudsz személyes adatot megadni: telefonon, e-mailben vagy üzenetküldőn érsz el minket.',
+                'Nincs űrlap. Az oldalon nem tudsz személyes adatot megadni: telefonon, e-mailben vagy üzenetben érsz el minket.',
                 'A betűtípusok és a képek ugyanarról a szerverről töltődnek be, mint maga a weboldal. Amikor megnyitsz egy oldalt, a böngésződ nem kér le semmit sem a Google Fontstól, sem más külső szolgáltatástól.',
               ],
             },
@@ -346,7 +346,7 @@ export const legal: Record<Locale, LegalLocale> = {
               ],
             },
             {
-              p: 'Bármelyik jogodat úgy gyakorolhatod, hogy írsz a {email} címre. A lehető leghamarabb válaszolunk.',
+              p: 'Ha élni szeretnél bármelyik jogoddal, írj a {email} címre. A lehető leghamarabb válaszolunk.',
             },
             {
               p: 'Magyarországon a felügyeleti hatóság a Nemzeti Adatvédelmi és Információszabadság Hatóság (NAIH), az EU többi országában az ottani adatvédelmi hatóság. Ukrajnában az ukrán parlament emberi jogi biztosához fordulhatsz, vagy bírósághoz.',
@@ -401,7 +401,7 @@ export const legal: Record<Locale, LegalLocale> = {
               p: 'Ha közvetlenül nálunk foglalsz (telefonon, e-mailben vagy üzenetküldőn), az érvényes, amit írásban visszaigazolunk neked.',
             },
             {
-              p: 'A lemondás, az előleg vagy kaució, a fizetési módok, a gyerekekre, a háziállatokra és a pótágyra vonatkozó feltételeket foglaláskor egyeztetjük. Ezekre itt nem teszünk közzé általános szabályt, ezért kérdezz nyugodtan.',
+              p: 'A lemondás, az előleg vagy kaució, a fizetési módok, a gyerekekre, a háziállatokra és a pótágyra vonatkozó feltételeket foglaláskor egyeztetjük. Ezekre nincs külön szabályzatunk, úgyhogy kérdezz bátran.',
             },
           ],
         },
@@ -459,7 +459,7 @@ export const legal: Record<Locale, LegalLocale> = {
           blocks: [
             { p: 'The data controller is Hotel Helikon. You can reach us here:' },
             { contact: true },
-            { p: 'For any question about your personal data, write to {email}.' },
+            { p: 'If you have any questions about your personal data, write to {email}.' },
           ],
         },
         {
@@ -470,7 +470,7 @@ export const legal: Record<Locale, LegalLocale> = {
               list: [
                 'No cookies. The site sets none and stores nothing else in your browser, which is why there is no cookie banner.',
                 'No analytics, visitor statistics, advertising pixels or other tracking scripts.',
-                'No forms. There is nowhere on the site to enter personal data: you reach us by phone, email or messenger instead.',
+                'No forms. There is nowhere on the site to enter personal data: you reach us by phone, email or messaging app instead.',
                 'Fonts and images are served from the same server as the site itself, so opening a page does not make your browser contact Google Fonts or any other outside service.',
               ],
             },
@@ -511,7 +511,7 @@ export const legal: Record<Locale, LegalLocale> = {
               p: 'If you book through Booking.com, Booking.com handles your data under its own privacy policy and passes the reservation details on to us so that we can host you.',
             },
             {
-              p: 'Messages sent through WhatsApp, Viber, Telegram, Instagram or Facebook also pass through those services, so their rules apply to them too.',
+              p: 'Messages sent through WhatsApp, Viber, Telegram, Instagram or Facebook also pass through those services, so their own privacy policies apply.',
             },
             {
               p: 'We keep the data for as long as we need it for these purposes, or longer where the law requires it.',
@@ -533,7 +533,7 @@ export const legal: Record<Locale, LegalLocale> = {
                 'complain to a supervisory authority (complaint).',
               ],
             },
-            { p: 'To use any of these rights, write to {email}. We will reply as soon as we can.' },
+            { p: 'To exercise any of these rights, write to {email}. We will reply as soon as we can.' },
             {
               p: 'In Hungary the supervisory authority is the Nemzeti Adatvédelmi és Információszabadság Hatóság (NAIH); elsewhere in the EU, it is your national data protection authority. In Ukraine you can turn to the Ukrainian Parliament Commissioner for Human Rights, or to the courts.',
             },
@@ -565,7 +565,7 @@ export const legal: Record<Locale, LegalLocale> = {
               p: `This website is run by Hotel Helikon (${INLINE_ADDRESS.en}). It tells you about the hotel, the rooms, the restaurant and our services. Its content is for information only, and nothing on it constitutes a booking.`,
             },
             {
-              p: 'We keep the information as current as we can, but things like opening hours, services or the pool season can change. If something matters for your plans, check with us.',
+              p: 'We keep the information as current as we can, but things like opening hours, services or the pool season can change. If something matters to your plans, please check with us.',
             },
           ],
         },
@@ -608,10 +608,10 @@ export const legal: Record<Locale, LegalLocale> = {
           ],
         },
         {
-          heading: 'Photos and texts',
+          heading: 'Photos and text',
           blocks: [
             {
-              p: 'The photos and texts on this site belong to Hotel Helikon. Please do not copy or reuse them without our permission. Sharing a link to the site is always welcome.',
+              p: 'The photos and text on this site belong to Hotel Helikon. Please do not copy or reuse them without our permission. Sharing a link to the site is always welcome.',
             },
           ],
         },
