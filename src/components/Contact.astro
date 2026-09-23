@@ -25,7 +25,8 @@ const t = useTranslations(locale);
         </div>
         <div>
           <dt>{t('contact.hours')}</dt>
-          <dd>{t('contact.hoursValue')}</dd>
+          {/* Two services, two different hours: the restaurant closes at night, reception never does. */}
+          <dd>{t('contact.hoursRestaurant')}<br />{t('contact.hoursReception')}</dd>
         </div>
         <div>
           <dt>{t('contact.checkin')}</dt>
@@ -34,6 +35,10 @@ const t = useTranslations(locale);
         <div>
           <dt>{t('contact.reception')}</dt>
           <dd><a href={`tel:${FACTS.phone}`}>{FACTS.phoneDisplay}</a></dd>
+        </div>
+        <div>
+          <dt>{t('contact.mobile')}</dt>
+          <dd><a href={`tel:${FACTS.phoneMobile}`}>{FACTS.phoneMobileDisplay}</a></dd>
         </div>
         <div>
           <dt>{t('contact.events')}</dt>

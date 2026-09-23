@@ -156,10 +156,15 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
 
   /* An equal-width grid, not a flex row: with flex the three values sat at
      uneven distances because each one is a different string length. */
+  /* Flex with a fixed gap, not three equal columns: in Ukrainian the tracked
+     caps labels ("ТРИВАЛІСТЬ", "АБОНЕМЕНТ") are wider than a third of the card
+     on a 360px phone, and in a grid they ran into each other. Here each item
+     keeps its natural width, the gaps stay equal, and a label that no longer
+     fits simply moves to the next line. */
   .wellness__meta {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem 2rem;
     margin-top: 1.5rem;
   }
 

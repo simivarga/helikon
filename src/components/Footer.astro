@@ -58,10 +58,11 @@ const socials = [
     <div class="footer__col">
       <p class="footer__label">{t('footer.contactCol')}</p>
       <a href={`tel:${FACTS.phone}`}>{FACTS.phoneDisplay}</a>
+      <a href={`tel:${FACTS.phoneMobile}`}>{FACTS.phoneMobileDisplay}</a>
       <a href={`tel:${FACTS.phoneEvents}`}>{FACTS.phoneEventsDisplay}</a>
       <a href={`mailto:${FACTS.email}`}>{FACTS.email}</a>
       <p>{t('contact.addressValue')}</p>
-      <p>{t('contact.hoursValue')}</p>
+      <p>{t('contact.hoursRestaurant')}<br />{t('contact.hoursReception')}</p>
     </div>
 
     <div class="footer__col">

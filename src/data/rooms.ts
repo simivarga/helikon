@@ -32,13 +32,13 @@ export interface Room {
 /** Maximum number of guests for each capacity label. */
 export const GUESTS: Record<Room['capacity'], number> = { cap2: 2, cap3: 3, cap4: 4 };
 
-const BASE = ['ac', 'bath', 'tv', 'wifi', 'sound'];
+const BASE = ['ac', 'bath', 'tv', 'wifi'];
 
 export const ROOMS: Room[] = [
-  { key: 'mansard', slug: 'mansard', price: 1800, capacity: 'cap2', amenities: [...BASE, 'patio'], photos: photosFor('mansard') },
+  { key: 'mansard', slug: 'mansard', price: 1800, capacity: 'cap2', amenities: [...BASE], photos: photosFor('mansard') },
   { key: 'standard', slug: 'standard-double', price: 2200, capacity: 'cap2', amenities: [...BASE, 'balcony'], photos: photosFor('standard') },
-  { key: 'standard3', slug: 'standard-triple', price: 3000, capacity: 'cap3', amenities: [...BASE, 'patio'], photos: photosFor('standard3') },
-  { key: 'half_lux', slug: 'junior-suite', price: 2800, capacity: 'cap2', amenities: [...BASE, 'patio'], photos: photosFor('half_lux') },
-  { key: 'lux', slug: 'suite', price: 4200, capacity: 'cap4', amenities: [...BASE, 'patio', 'fridge'], photos: photosFor('lux') },
-  { key: 'family', slug: 'family-suite', price: 4200, capacity: 'cap4', amenities: [...BASE, 'patio', 'fridge'], photos: photosFor('family') },
+  { key: 'standard3', slug: 'standard-triple', price: 3000, capacity: 'cap3', amenities: [...BASE], photos: photosFor('standard3') },
+  { key: 'half_lux', slug: 'deluxe', price: 2800, capacity: 'cap2', amenities: [...BASE], photos: photosFor('half_lux') },
+  { key: 'lux', slug: 'suite', price: 4200, capacity: 'cap4', amenities: [...BASE, 'fridge'], photos: photosFor('lux') },
+  { key: 'family', slug: 'family-suite', price: 4200, capacity: 'cap4', amenities: [...BASE, 'fridge'], photos: photosFor('family') },
 ];
