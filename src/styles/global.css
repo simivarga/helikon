@@ -113,6 +113,10 @@
        container and break window.scrollY, Lenis and sticky positioning. */
     overflow-x: clip;
     background-color: var(--color-forest-900);
+    /* Arriving from another page at /hu/#pool is a native jump, not a Lenis
+       scroll, so it ignores the -80px offset in-page links use and lands the
+       heading under the fixed header. This gives native jumps the same gap. */
+    scroll-padding-top: 5rem;
   }
 
   html.lenis,
