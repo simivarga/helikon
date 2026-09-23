@@ -6,12 +6,13 @@ import { getLocaleFromUrl, useTranslations, localePath } from '../i18n/utils';
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const year = 2026;
+// Stamped at build time, so the copyright follows the deploy, not the source.
+const year = new Date().getFullYear();
 
 // The section anchors only exist on the home page. Elsewhere (the legal pages)
 // a bare "#rooms" would go nowhere, so point them back at the home page.
 const home = localePath(locale);
-const onHome = Astro.url.pathname === home;
+const onHome = Astro.url.pathname.replace(/\/?$/, '/') === home;
 const anchor = (id: string) => (onHome ? `#${id}` : `${home}#${id}`);
 
 const explore = [
@@ -48,12 +49,14 @@ const socials = [
     </div>
 
     <nav class="footer__col" aria-label={t('footer.explore')}>
-      <h2>{t('footer.explore')}</h2>
+      {/* Column labels, not headings: as <h2>s they added four entries to the
+          outline of every page, below its real content. */}
+      <p class="footer__label">{t('footer.explore')}</p>
       {explore.map((item) => <a href={item.href}>{t(item.key)}</a>)}
     </nav>
 
     <div class="footer__col">
-      <h2>{t('footer.contactCol')}</h2>
+      <p class="footer__label">{t('footer.contactCol')}</p>
       <a href={`tel:${FACTS.phone}`}>{FACTS.phoneDisplay}</a>
       <a href={`tel:${FACTS.phoneEvents}`}>{FACTS.phoneEventsDisplay}</a>
       <a href={`mailto:${FACTS.email}`}>{FACTS.email}</a>
@@ -62,9 +65,9 @@ const socials = [
     </div>
 
     <div class="footer__col">
-      <h2>{t('footer.followCol')}</h2>
+      <p class="footer__label">{t('footer.followCol')}</p>
       {socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
-      <h2 class="footer__col-second">{t('footer.bookCol')}</h2>
+      <p class="footer__label footer__col-second">{t('footer.bookCol')}</p>
       <a href={FACTS.booking} target="_blank" rel="noopener" class="footer__booking">{t('footer.bookingLink')}</a>
     </div>
   </div>
@@ -121,9 +124,9 @@ const socials = [
     align-items: center;
     gap: 0.5rem;
     margin-top: 0.5rem;
-    font-size: 0.56rem;
+    font-size: var(--text-label, 0.75rem);
     font-weight: 600;
-    letter-spacing: 0.26em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--color-gold-500);
   }
@@ -141,9 +144,10 @@ const socials = [
     gap: 0.55rem;
   }
 
-  .footer__col h2 {
+  .footer__col .footer__label {
     font-family: var(--font-sans);
-    font-size: 0.64rem;
+    font-size: var(--text-label, 0.75rem);
+    line-height: 1.05;
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -156,7 +160,7 @@ const socials = [
   }
 
   .footer__col a,
-  .footer__col p {
+  .footer__col p:not(.footer__label) {
     font-size: 0.92rem;
     /* The email address is one unbreakable token; this is its only escape. */
     overflow-wrap: anywhere;

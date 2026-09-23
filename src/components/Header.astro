@@ -25,11 +25,13 @@ const nav = [
 
 <header data-header class="site-header">
   <div class="gutter flex items-center gap-6">
-    <a href={localePath(locale)} class="brand-link" aria-label="Helikon">
+    {/* No aria-label: the visible text is the accessible name, so speech
+        users can say what they see ("Helikon Est. 2005"). */}
+    <a href={localePath(locale)} class="brand-link">
       <span class="brand-name">Helikon</span>
       <span class="brand-meta">
         <Stars class="text-gold-500 text-[0.62rem]" />
-        <span class="brand-est">Est. 2005</span>
+        <span class="brand-est">Est. {FACTS.established}</span>
       </span>
     </a>
 
@@ -72,35 +74,48 @@ const nav = [
 </header>
 
 <div id="mobile-menu" class="mobile-menu" data-menu inert>
-  <nav aria-label={t('nav.menu')} class="mobile-menu__nav">
-    {nav.map((item) => <a href={item.href}>{t(item.key)}</a>)}
-  </nav>
+  <div class="mobile-menu__inner">
+    <nav aria-label={t('nav.menu')} class="mobile-menu__nav">
+      {nav.map((item) => <a href={item.href}>{t(item.key)}</a>)}
+    </nav>
 
-  <div class="mobile-menu__foot">
-    <a href={FACTS.booking} target="_blank" rel="noopener" class="btn btn-gold">{t('nav.book')}</a>
+    <div class="mobile-menu__foot">
+      <a href={FACTS.booking} target="_blank" rel="noopener" class="btn btn-gold">{t('nav.book')}</a>
 
-    <div class="mobile-menu__langs" role="group" aria-label={t('nav.language')}>
-      {
-        LOCALES.map((l, i) => (
-          <>
-            {i > 0 && <span aria-hidden="true">/</span>}
-            <a href={alternates[l]} hreflang={LOCALE_TAGS[l]} aria-current={l === locale ? 'true' : undefined}>
-              {LOCALE_LABELS[l]}
-            </a>
-          </>
-        ))
-      }
+      <div class="mobile-menu__langs" role="group" aria-label={t('nav.language')}>
+        {
+          LOCALES.map((l, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true">/</span>}
+              <a href={alternates[l]} hreflang={LOCALE_TAGS[l]} aria-current={l === locale ? 'true' : undefined}>
+                {LOCALE_LABELS[l]}
+              </a>
+            </>
+          ))
+        }
+      </div>
+
+      <a href={`tel:${FACTS.phone}`} class="mobile-menu__phone">{FACTS.phoneDisplay}</a>
     </div>
-
-    <a href={`tel:${FACTS.phone}`} class="mobile-menu__phone">{FACTS.phoneDisplay}</a>
   </div>
 </div>
 
 <script>
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const header = document.querySelector<HTMLElement>('[data-header]');
 
-  if (toggle && menu) {
+  if (toggle && menu && header) {
+    // Everything that must drop out of reach while the overlay is open: every
+    // top-level sibling (skip link, main, footer, ...) plus the header's own
+    // controls apart from the close button.
+    const behind = () => [
+      ...Array.from(document.body.children).filter(
+        (el): el is HTMLElement => el instanceof HTMLElement && el !== header && el !== menu && el.tagName !== 'SCRIPT',
+      ),
+      ...Array.from(header.querySelectorAll<HTMLElement>('.brand-link, nav, .lang-group, .book-button')),
+    ];
+
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open));
       toggle.classList.toggle('is-open', open);
@@ -110,13 +125,13 @@ const nav = [
       if (open) menu.removeAttribute('inert');
       else menu.setAttribute('inert', '');
       document.documentElement.classList.toggle('menu-open', open);
-      // `inert` on the menu alone only hides it when closed. While it is open
-      // the rest of the page is still tabbable behind the opaque overlay, so
-      // focus escaped onto controls the user cannot see.
-      document.querySelectorAll<HTMLElement>('main, footer, [data-header] .brand-link, [data-header] nav, [data-header] .lang-group, [data-header] .book-button').forEach((el) => {
+      // While the overlay is open the rest of the page is still tabbable
+      // behind it, so focus would escape onto controls the user cannot see.
+      behind().forEach((el) => {
         if (open) el.setAttribute('inert', '');
         else el.removeAttribute('inert');
       });
+      if (open) menu.scrollTop = 0;
       // Lenis owns the scroll position, so pausing it is what locks the page.
       const lenis = (window as unknown as { lenis?: { stop(): void; start(): void } }).lenis;
       if (open) lenis?.stop();
@@ -126,20 +141,47 @@ const nav = [
     toggle.addEventListener('click', () => {
       const open = toggle.getAttribute('aria-expanded') !== 'true';
       setOpen(open);
-      if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
+      if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus({ preventScroll: true });
     });
-    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+
+    // Capture phase on the container, so the menu is closed (and Lenis
+    // restarted) before the smooth-anchor handler on the link asks Lenis to
+    // scroll. A stopped Lenis ignores scrollTo.
+    menu.addEventListener(
+      'click',
+      (e) => {
+        if ((e.target as Element).closest('a')) setOpen(false);
+      },
+      { capture: true },
+    );
+
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && menu.classList.contains('is-open')) {
+      if (!menu.classList.contains('is-open')) return;
+      if (e.key === 'Escape') {
         setOpen(false);
         toggle.focus();
+        return;
+      }
+      // Keep Tab cycling between the close button and the menu links instead
+      // of leaving for the browser chrome.
+      if (e.key === 'Tab') {
+        const links = Array.from(menu.querySelectorAll<HTMLElement>('a'));
+        const first = toggle;
+        const last = links[links.length - 1];
+        if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
       }
     });
   }
 </script>
 
 <style>
-  /* Transparent over the hero photograph, then a dark blurred bar once the
+  /* Transparent over the hero photograph, then a solid dark bar once the
      hero is behind us. Text stays cream throughout, so it never has to
      switch colour mid-scroll. */
   .site-header {
@@ -179,11 +221,10 @@ const nav = [
 
   .site-header.is-condensed {
     padding-block: 0.75rem;
-    /* 92% opaque with a light blur rather than 82% + blur(16px): a full-width
-       fixed bar re-blurring fresh content every frame was the single largest
-       persistent compositing cost during scroll. */
-    background-color: color-mix(in oklab, var(--color-forest-950) 94%, transparent);
-    backdrop-filter: blur(6px);
+    /* Solid, not frosted: a blurred translucent bar reads as a template tell,
+       its contrast drifted with whatever scrolled under it, and re-blurring
+       fresh content every frame was the largest compositing cost in scroll. */
+    background-color: var(--color-forest-950);
     border-bottom: 1px solid color-mix(in oklab, var(--color-gold-700) 28%, transparent);
   }
 
@@ -210,11 +251,11 @@ const nav = [
   }
 
   .brand-est {
-    font-size: 0.62rem;
+    font-size: var(--text-label, 0.75rem);
     font-weight: 600;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: color-mix(in oklab, var(--color-gold-500) 80%, transparent);
+    color: var(--color-gold-500);
   }
 
   /* ---- nav ------------------------------------------------------------- */
@@ -280,12 +321,16 @@ const nav = [
   .lang-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-width: 44px;
     min-height: 44px;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.72rem;
+    padding: 0.25rem 0.4rem;
+    font-size: var(--text-label, 0.75rem);
     font-weight: 600;
     letter-spacing: 0.1em;
-    color: color-mix(in oklab, var(--color-cream) 55%, transparent);
+    /* A tone of its own, not see-through cream: over the hero photograph
+       transparency loses contrast unpredictably. */
+    color: var(--color-cream-muted);
     transition: color 0.3s var(--ease-out-quart);
   }
   .lang-link:hover {
@@ -299,7 +344,7 @@ const nav = [
 
   .book-button {
     display: none;
-    border-radius: 999px;
+    border-radius: var(--radius-control, 3px);
     background: var(--color-gold-500);
     padding: 0.66rem 1.4rem;
     font-size: 0.85rem;
@@ -316,7 +361,9 @@ const nav = [
 
   @media (min-width: 768px) {
     .book-button {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
     }
   }
 
@@ -369,11 +416,6 @@ const nav = [
     position: fixed;
     inset: 0;
     z-index: 40;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 3rem;
-    padding: 6.5rem clamp(1.25rem, 5vw, 5rem) 3rem;
     background: var(--color-forest-950);
     /* Landscape phones are only ~390px tall while this menu needs ~500px.
        Lenis is stopped while it is open, so without its own scroller the
@@ -389,10 +431,25 @@ const nav = [
     clip-path: inset(0 0 0 0);
   }
 
+  /* Centred while it fits, top-aligned once it does not. Centring the
+     scroller itself pushed the overflow above the top edge, where scrollTop
+     cannot reach (the first link sat at -96px on an 844x390 phone). A
+     min-height wrapper grows downwards instead, and unlike
+     `justify-content: safe center` it behaves the same in every engine. */
+  .mobile-menu__inner {
+    box-sizing: border-box;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3rem;
+    padding: 6.5rem clamp(1.25rem, 5vw, 5rem) 3rem;
+  }
+
   /* Landscape phones and short windows: shrink the type so the whole menu
      fits without relying on the scroller. */
   @media (max-height: 480px) {
-    .mobile-menu {
+    .mobile-menu__inner {
       gap: 1.25rem;
       padding: 4.5rem clamp(1.25rem, 5vw, 5rem) 1.5rem;
     }
@@ -459,6 +516,8 @@ const nav = [
   .mobile-menu__langs a {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-width: 44px;
     min-height: 44px;
     padding-inline: 0.35rem;
     color: color-mix(in oklab, var(--color-cream) 70%, transparent);
@@ -480,7 +539,7 @@ const nav = [
   /* While the overlay is open only the close button stays visible. */
   :global(html.menu-open) .site-header {
     background: transparent;
-    backdrop-filter: none;
+    border-bottom-color: transparent;
     box-shadow: none;
   }
 
