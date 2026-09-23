@@ -21,6 +21,8 @@ const { photos, label, id, sizes = '(max-width: 900px) 100vw, 48vw', eager = fal
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const multiple = photos.length > 1;
+// "Mansard room, photo 2 / 5": spoken cleanly by screen readers.
+const photoWord = t('carousel.photo').toLocaleLowerCase(locale);
 ---
 
 <!-- Native scroll-snap does the scrolling; the buttons and dots only nudge it.
@@ -37,7 +39,7 @@ const multiple = photos.length > 1;
               its carousel, so there the first slide is the LCP image. */}
           <Image
             src={photo}
-            alt={`${label} — ${i + 1}`}
+            alt={`${label}, ${photoWord} ${i + 1} / ${photos.length}`}
             widths={[480, 720, 1000]}
             sizes={sizes}
             loading={eager && i === 0 ? 'eager' : 'lazy'}
@@ -106,7 +108,9 @@ const multiple = photos.length > 1;
   }
 
   /* Controls stay hidden until the carousel is hovered or focused, so at rest
-     the photograph is uninterrupted. On touch they are always visible. */
+     the photograph is uninterrupted. On touch they are always visible.
+     Solid surfaces, not frosted glass: the contrast of the icon and the
+     counter must not depend on the photograph behind them. */
   .carousel__nav {
     position: absolute;
     top: 50%;
@@ -115,10 +119,9 @@ const multiple = photos.length > 1;
     place-items: center;
     width: 2.75rem;
     height: 2.75rem;
-    border: 0;
-    border-radius: 50%;
-    background: color-mix(in oklab, var(--color-forest-950) 62%, transparent);
-    backdrop-filter: blur(6px);
+    border: 1px solid var(--color-gold-700);
+    border-radius: var(--radius-control, 3px);
+    background: var(--color-forest-950);
     color: var(--color-cream);
     cursor: pointer;
     opacity: 0;
@@ -146,6 +149,7 @@ const multiple = photos.length > 1;
 
   .carousel__nav:hover {
     background: var(--color-gold-500);
+    border-color: var(--color-gold-500);
     color: var(--color-forest-950);
   }
 
@@ -155,39 +159,48 @@ const multiple = photos.length > 1;
     }
   }
 
+  /* Each button is its own 28 x 36 hit box, laid edge to edge with no gap so
+     neighbouring targets never overlap. The visible dot is drawn inside it,
+     and the active pill (21.6px) still fits within its own box. */
   .carousel__dots {
     position: absolute;
     inset-inline: 0;
-    bottom: 0.85rem;
+    bottom: 0.2rem;
     display: flex;
     justify-content: center;
-    gap: 0.4rem;
+    /* The row spans the full width; only the buttons may catch touches, so a
+       swipe that starts beside the dots still moves the strip. */
+    pointer-events: none;
   }
 
   .carousel__dot {
     position: relative;
-    width: 0.4rem;
-    height: 0.4rem;
+    width: 1.75rem;
+    height: 2.25rem;
     padding: 0;
     border: 0;
-    border-radius: 50%;
-    background: color-mix(in oklab, var(--color-cream) 45%, transparent);
+    background: none;
     cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .carousel__dot::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.4rem;
+    height: 0.4rem;
+    translate: -50% -50%;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-cream) 45%, transparent);
     transition:
       background-color 0.35s var(--ease-out-quart),
       width 0.35s var(--ease-out-expo);
   }
 
-  /* Invisible 44px hit area around a deliberately small dot. */
-  .carousel__dot::before {
-    content: '';
-    position: absolute;
-    inset: -19px -8px;
-  }
-
-  .carousel__dot[aria-current='true'] {
+  .carousel__dot[aria-current='true']::before {
     width: 1.35rem;
-    border-radius: 999px;
     background: var(--color-gold-500);
   }
 
@@ -195,11 +208,10 @@ const multiple = photos.length > 1;
     position: absolute;
     top: 0.85rem;
     right: 0.9rem;
-    padding: 0.24rem 0.6rem;
-    border-radius: 999px;
-    background: color-mix(in oklab, var(--color-forest-950) 58%, transparent);
-    backdrop-filter: blur(6px);
-    font-size: 0.7rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: var(--radius-control, 3px);
+    background: var(--color-forest-950);
+    font-size: var(--text-label, 0.75rem);
     font-weight: 600;
     letter-spacing: 0.06em;
     color: var(--color-cream);
@@ -224,6 +236,29 @@ const multiple = photos.length > 1;
     if (slides.length < 2) return;
 
     let index = 0;
+    // While a button-driven scroll is in flight, `index` is the truth and the
+    // scroll position is not: every intermediate position is closer to some
+    // other slide. Reading the index back from those positions is what made
+    // rapid clicks race each other and land a slide too far.
+    let target: number | null = null;
+    let retries = 0;
+    let idle = 0;
+    let raf = 0;
+
+    const leftOf = (i: number) => slides[i].offsetLeft - track.offsetLeft;
+
+    const nearest = () => {
+      let best = 0;
+      let bestDelta = Infinity;
+      slides.forEach((_, i) => {
+        const delta = Math.abs(leftOf(i) - track.scrollLeft);
+        if (delta < bestDelta) {
+          bestDelta = delta;
+          best = i;
+        }
+      });
+      return best;
+    };
 
     const render = () => {
       dots.forEach((d, i) => d.setAttribute('aria-current', String(i === index)));
@@ -231,40 +266,72 @@ const multiple = photos.length > 1;
       // No disabled state: the arrows wrap, so both are always live.
     };
 
+    const sync = () => {
+      const i = nearest();
+      if (i !== index) {
+        index = i;
+        render();
+      }
+    };
+
+    // The strip has come to rest (scrollend, or no scroll event for a while
+    // where scrollend is unsupported). Release a programmatic scroll once it
+    // has arrived, then trust the position again. A user swipe clears
+    // `target` itself (see handOver), so coming to rest short of the target
+    // means the engine dropped the scroll: WebKit abandons a smooth scroll
+    // that is retargeted many times in quick succession. Ask again, and jump
+    // on the last attempt.
+    const settle = () => {
+      window.clearTimeout(idle);
+      if (target !== null) {
+        if (Math.abs(leftOf(target) - track.scrollLeft) >= 2 && retries < 3) {
+          retries += 1;
+          track.scrollTo({ left: leftOf(target), behavior: retries < 3 ? 'smooth' : 'instant' });
+          idle = window.setTimeout(settle, 250);
+          return;
+        }
+        target = null;
+      }
+      sync();
+    };
+
     const go = (i: number) => {
       // Wrap: past the last photo comes the first, and vice versa.
       const n = slides.length;
       index = ((i % n) + n) % n;
-      track.scrollTo({ left: slides[index].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+      target = index;
+      retries = 0;
+      track.scrollTo({ left: leftOf(index), behavior: 'smooth' });
       render();
+      window.clearTimeout(idle);
+      idle = window.setTimeout(settle, 200);
     };
 
     prev?.addEventListener('click', () => go(index - 1));
     next?.addEventListener('click', () => go(index + 1));
     dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
 
-    // Keep the dots in step when the user swipes or scrolls the strip directly.
-    let raf = 0;
+    // A finger or a trackpad takes over from any scroll we started.
+    const handOver = () => {
+      target = null;
+    };
+    track.addEventListener('touchstart', handOver, { passive: true });
+    track.addEventListener('wheel', handOver, { passive: true });
+    track.addEventListener('pointerdown', handOver, { passive: true });
+
+    // Keep the dots in step while the user swipes or scrolls the strip.
     track.addEventListener(
       'scroll',
       () => {
+        window.clearTimeout(idle);
+        idle = window.setTimeout(settle, 150);
+        if (target !== null) return;
         cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          const nearest = slides.reduce(
-            (best, slide, i) => {
-              const delta = Math.abs(slide.offsetLeft - track.offsetLeft - track.scrollLeft);
-              return delta < best.delta ? { delta, i } : best;
-            },
-            { delta: Infinity, i: 0 },
-          );
-          if (nearest.i !== index) {
-            index = nearest.i;
-            render();
-          }
-        });
+        raf = requestAnimationFrame(sync);
       },
       { passive: true },
     );
+    track.addEventListener('scrollend', settle);
 
     track.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') {
