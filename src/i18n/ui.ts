@@ -16,16 +16,17 @@ export const LOCALE_TAGS: Record<Locale, string> = { uk: 'uk-UA', hu: 'hu-HU', e
  * absent — the copy asks the guest to call instead of stating a wrong number.
  */
 export const FACTS = {
-  phone: '+380505943791',
-  phoneDisplay: '+380 (50) 594 37 91',
-  // Printed on the hotel's own roadside billboard, so this one is confirmed.
+  // The live number: printed on the hotel's own roadside billboard and
+  // confirmed by the client. The 594 37 91 number on the old site is not used.
+  phone: '+380502603591',
+  phoneDisplay: '+380 (50) 260 35 91',
   phoneReception: '+380502603591',
   phoneReceptionDisplay: '+380 (50) 260 35 91',
   phoneEvents: '+380505502217',
   phoneEventsDisplay: '+380 (50) 550 22 17',
   email: 'helikon.janosi@gmail.com',
-  whatsapp: 'https://wa.me/380505943791',
-  viber: 'viber://chat?number=%2B380505943791',
+  whatsapp: 'https://wa.me/380502603591',
+  viber: 'viber://chat?number=%2B380502603591',
   booking: 'https://www.booking.com/hotel/ua/otiel-gielikon.html',
   // Coordinates, never a name search: "Hotel Helikon" also matches the
   // unrelated hotel at Lake Balaton, and Google routed there instead.
