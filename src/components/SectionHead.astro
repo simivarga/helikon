@@ -1,6 +1,9 @@
 ---
 interface Props {
-  eyebrow: string;
+  /** Optional, and deliberately rare: only pass one when it tells the reader
+      something the heading does not. A label that just repeats the section's
+      nav name above a heading about the same thing is noise. */
+  eyebrow?: string;
   title: string;
   lede?: string;
   align?: 'start' | 'center';
@@ -13,7 +16,7 @@ const { eyebrow, title, lede, align = 'start', class: className = '', headingId 
 ---
 
 <div class:list={['section-head', align === 'center' && 'is-center', className]}>
-  <p class="eyebrow section-head__eyebrow">{eyebrow}</p>
+  {eyebrow && <p class="eyebrow section-head__eyebrow">{eyebrow}</p>}
   <h2 class="section-head__title" id={headingId}>{title}</h2>
   {lede && <p class="section-head__lede">{lede}</p>}
   <hr class="rule-gold section-head__rule" />
@@ -31,6 +34,7 @@ const { eyebrow, title, lede, align = 'start', class: className = '', headingId 
   }
 
   .section-head__eyebrow {
+    margin-bottom: 1.1rem;
     color: var(--color-gold-500);
     font-size: 0.78rem;
   }
@@ -41,7 +45,6 @@ const { eyebrow, title, lede, align = 'start', class: className = '', headingId 
   }
 
   .section-head__title {
-    margin-top: 1.1rem;
     font-size: var(--text-display-sm);
     max-width: 22ch;
   }
@@ -50,10 +53,16 @@ const { eyebrow, title, lede, align = 'start', class: className = '', headingId 
     max-width: 26ch;
   }
 
+  /* An opaque secondary tone, not a transparent cream: the wellness heading
+     sits over a photograph, where transparency loses contrast unpredictably. */
   .section-head__lede {
     margin-top: 1.4rem;
     max-width: 56ch;
-    color: color-mix(in oklab, currentColor 78%, transparent);
+    color: var(--color-cream-muted);
+  }
+
+  :global(.section-light) .section-head__lede {
+    color: color-mix(in oklab, var(--color-forest-900) 78%, var(--color-sand-200));
   }
 
   .section-head__rule {

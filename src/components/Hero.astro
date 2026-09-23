@@ -18,7 +18,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
 });
 ---
 
-<section class="hero grain scrim" aria-labelledby="hero-title">
+<section class="hero scrim" aria-labelledby="hero-title">
   <div class="hero__media">
     <Image
       src={gardenBridge}
@@ -214,32 +214,20 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
     display: grid;
     justify-items: center;
     gap: 0.7rem;
-    color: color-mix(in oklab, var(--color-cream) 55%, transparent);
-    font-size: 0.62rem;
+    color: var(--color-cream-muted);
+    text-shadow: 0 1px 14px oklch(0.16 0.05 139.5 / 0.8);
     transition: color 0.4s var(--ease-out-quart);
   }
   .hero__scroll:hover {
     color: var(--color-cream);
   }
 
+  /* A still hairline. It used to pulse forever, which kept pulling the eye
+     away from the headline long after the point had been made. */
   .hero__scroll-line {
     width: 1px;
     height: 2.6rem;
     background: linear-gradient(to bottom, var(--color-gold-500), transparent);
-    transform-origin: top;
-    animation: scroll-pulse 2.4s var(--ease-out-expo) infinite;
-  }
-
-  @keyframes scroll-pulse {
-    0%,
-    100% {
-      transform: scaleY(0.35);
-      opacity: 0.4;
-    }
-    50% {
-      transform: scaleY(1);
-      opacity: 1;
-    }
   }
 
   /* Everything above the fold animates on load, never on scroll, so nothing
@@ -265,6 +253,46 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
     .hero__scroll {
       display: none;
     }
+    /* Tighter on phones so the place line holds one line instead of breaking
+       after the middle dot. */
+    .hero__eyebrow {
+      gap: 0.7rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+    }
+  }
+
+  /* Landscape phones and other short screens (390px tall and under ~560).
+     At the full sizes the headline alone filled the screen and the booking
+     buttons started 440-500px down, below the fold. Here the headline scales
+     with the viewport height instead of its width, and the stack tightens, so
+     place, headline, rating and both buttons all land on the first screen. */
+  @media (max-height: 560px) and (min-width: 560px) {
+    .hero__inner {
+      padding-top: 5.5rem;
+      padding-bottom: 1.5rem;
+    }
+    .hero__eyebrow {
+      margin-bottom: 0.9rem;
+      font-size: 0.8rem;
+    }
+    .hero__title {
+      font-size: clamp(1.75rem, 8.5vh, 2.6rem);
+      max-width: 30ch;
+    }
+    .hero__meta {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    .hero__score strong {
+      font-size: 1.35rem;
+    }
+    .hero__actions {
+      margin-top: 1.25rem;
+    }
+    .hero__scroll {
+      display: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -273,8 +301,7 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
     :global(.js) .hero__eyebrow,
     :global(.js) .hero__meta,
     :global(.js) .hero__actions,
-    :global(.js) .hero__scroll,
-    .hero__scroll-line {
+    :global(.js) .hero__scroll {
       opacity: 1;
       transform: none;
       animation: none;

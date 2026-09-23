@@ -18,7 +18,7 @@ const halls = [
 
 <section id="events" aria-labelledby="events-title" class="events">
   <div class="gutter">
-    <SectionHead headingId="events-title" eyebrow={t('events.eyebrow')} title={t('events.title')} lede={t('events.lede')} />
+    <SectionHead headingId="events-title" title={t('events.title')} lede={t('events.lede')} />
   </div>
 
   <div class="gutter events__grid">
@@ -63,7 +63,7 @@ const halls = [
 <style>
   .events {
     background: var(--color-forest-900);
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .events__grid {
@@ -134,9 +134,9 @@ const halls = [
 
   .events__call-label {
     font-family: var(--font-sans);
-    font-size: 0.66rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }

@@ -11,7 +11,7 @@ const t = useTranslations(locale);
 const currency = locale === 'uk' ? '₴' : 'UAH';
 ---
 
-<section id="wellness" aria-labelledby="wellness-title" class="wellness grain">
+<section id="wellness" aria-labelledby="wellness-title" class="wellness">
   <div class="wellness__bg">
     <Image src={wellnessBg} alt="" widths={[900, 1400, 1800]} sizes="100vw" loading="lazy" class="wellness__bg-img" data-parallax="0.05" />
   </div>
@@ -24,7 +24,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     </figure>
 
     <div class="wellness__copy">
-      <SectionHead headingId="wellness-title" eyebrow={t('wellness.eyebrow')} title={t('wellness.title')} lede={t('wellness.lede')} />
+      <SectionHead headingId="wellness-title" title={t('wellness.title')} lede={t('wellness.lede')} />
 
       <div class="wellness__cards">
         <article class="wellness__card">
@@ -67,7 +67,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     isolation: isolate;
     overflow: hidden;
     background: var(--color-forest-950);
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .wellness__bg {
@@ -137,9 +137,10 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
     }
   }
 
+  /* Solid forest, not frosted glass. Fully opaque, so the text contrast is a
+     fixed number rather than whatever the photograph behind happens to be. */
   .wellness__card {
-    background: color-mix(in oklab, var(--color-forest-950) 82%, transparent);
-    backdrop-filter: blur(10px);
+    background: var(--color-forest-950);
     padding: clamp(1.4rem, 3vw, 2rem);
   }
 
@@ -164,9 +165,9 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
 
   .wellness__meta dt {
     font-family: var(--font-sans);
-    font-size: 0.62rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-gold-500);
   }

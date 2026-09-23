@@ -26,7 +26,7 @@ const stats = [
      copy and the figures, darkened only where text sits. Previously the photo
      was a cropped band with the copy stacked on flat green below it, which
      read as two unrelated blocks. -->
-<section id="pool" class="pool grain" aria-labelledby="pool-title">
+<section id="pool" class="pool" aria-labelledby="pool-title">
   <div class="pool__media">
     <Image
       src={poolAerial}
@@ -196,20 +196,24 @@ const stats = [
     text-shadow: 0 1px 24px oklch(0.16 0.05 139.5 / 0.65);
   }
 
+  /* A solid chip, not a blurred glass pill: an opaque forest ground keeps the
+     gold at a measured contrast wherever the photograph behind it is bright. */
   .pool__free {
     margin-top: 1.75rem;
     display: inline-block;
-    border: 1px solid color-mix(in oklab, var(--color-gold-500) 45%, transparent);
-    border-radius: 999px;
-    padding: 0.5rem 1.15rem;
+    border: 1px solid color-mix(in oklab, var(--color-gold-500) 45%, var(--color-forest-950));
+    border-radius: var(--radius-control);
+    padding: 0.55rem 1rem;
+    background: var(--color-forest-950);
     font-size: 0.82rem;
     font-weight: 600;
+    letter-spacing: 0.02em;
     color: var(--color-gold-500);
-    backdrop-filter: blur(4px);
   }
 
-  /* The stats become a band along the base of the photograph, divided by fine
-     gold rules instead of sitting in their own boxed panel. */
+  /* The stats become a band along the base of the photograph under one fine
+     gold rule. The columns are separated by space alone, not by vertical
+     rules between them. */
   .pool__stats {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -222,18 +226,15 @@ const stats = [
   @media (min-width: 780px) {
     .pool__stats {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-    .pool__stat + .pool__stat {
-      padding-left: clamp(1rem, 2.5vw, 2rem);
-      border-left: 1px solid color-mix(in oklab, var(--color-gold-500) 22%, transparent);
+      column-gap: clamp(1.5rem, 3vw, 2.5rem);
     }
   }
 
   .pool__stat dt {
     font-family: var(--font-sans);
-    font-size: 0.64rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }

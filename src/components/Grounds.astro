@@ -26,7 +26,7 @@ const tiles = [
 
 <section id="grounds" aria-labelledby="grounds-title" class="grounds section-light">
   <div class="gutter grounds__head">
-    <SectionHead headingId="grounds-title" eyebrow={t('grounds.eyebrow')} title={t('grounds.title')} lede={t('grounds.lede')} align="center" />
+    <SectionHead headingId="grounds-title" title={t('grounds.title')} lede={t('grounds.lede')} align="center" />
   </div>
 
   <div class="gutter grounds__grid">
@@ -49,7 +49,7 @@ const tiles = [
 
 <style>
   .grounds {
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .grounds__head {
@@ -84,6 +84,4 @@ const tiles = [
     aspect-ratio: 1;
     object-fit: cover;
   }
-
-
 </style>

@@ -20,7 +20,7 @@ const stats = [
 <section id="welcome" aria-labelledby="welcome-title" class="welcome section-light">
   <div class="gutter welcome__grid">
     <div class="welcome__copy">
-      <SectionHead headingId="welcome-title" eyebrow={t('welcome.eyebrow')} title={t('welcome.title')} />
+      <SectionHead headingId="welcome-title" title={t('welcome.title')} />
       <div class="welcome__body">
         <p>{t('welcome.body1')}</p>
         <p>{t('welcome.body2')}</p>
@@ -51,7 +51,7 @@ const stats = [
 
 <style>
   .welcome {
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .welcome__grid {
@@ -92,9 +92,9 @@ const stats = [
 
   .welcome__stat dt {
     font-family: var(--font-sans);
-    font-size: 0.66rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-bronze-600);
   }

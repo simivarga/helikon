@@ -77,6 +77,24 @@
   --text-display-md: clamp(2.6rem, 1.3rem + 5.4vw, 5rem);
   --text-display-lg: clamp(3rem, 1rem + 8.5vw, 8rem);
 
+  /* The small tracked capitals used for every label, caption and eyebrow.
+     One size, 12px, at every viewport: the old per-component values ran from
+     9.9 to 11.5px and were the hardest text on the page to read on a phone. */
+  --text-label: 0.75rem;
+  --tracking-label: 0.16em;
+
+  /* --- layout ------------------------------------------------------------ */
+  /* The widest the content column ever gets. Past it the layout stops growing
+     and centres; photographic backgrounds still run edge to edge because the
+     limit is applied as padding inside full-width sections, not as a width. */
+  --container-content: 88rem;
+
+  /* Vertical padding of every full section, so the page keeps one rhythm. */
+  --spacing-section: clamp(4.5rem, 10vw, 8rem);
+
+  /* Controls (buttons, chips) share the photographs' near-square corner. */
+  --radius-control: 3px;
+
   /* --- motion ------------------------------------------------------------ */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
@@ -158,14 +176,26 @@
 
 @utility eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: var(--text-label);
   font-weight: 600;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
+/* The label style shared by definition terms, captions and small headings. */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Side padding that also caps the content width. The element itself stays
+   full width (so a section's background or photograph still bleeds), while
+   its content never grows past --container-content and sits centred. */
 @utility gutter {
-  padding-inline: clamp(1.25rem, 5vw, 5rem);
+  padding-inline: max(clamp(1.25rem, 5vw, 5rem), calc((100% - var(--container-content)) / 2));
 }
 
 /* A light section on an otherwise dark page. The vertical gradient is what
@@ -205,9 +235,9 @@
   bottom: 0;
   padding: 3rem 0.9rem 0.85rem;
   font-family: var(--font-sans);
-  font-size: 0.68rem;
+  font-size: var(--text-label);
   font-weight: 600;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-gold-400);
   background: linear-gradient(
@@ -246,33 +276,35 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 999px;
-    padding: 0.95rem 1.9rem;
+    min-height: 3rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-control);
+    padding: 0.9rem 1.75rem;
     font-family: var(--font-sans);
     font-size: 0.9rem;
     font-weight: 600;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
+    /* Hover changes colour only. No lift and no fade: the button stays put
+       and stays fully opaque, which is what reads as solid. */
     transition:
-      transform 0.5s var(--ease-out-expo),
       background-color 0.35s var(--ease-out-quart),
       border-color 0.35s var(--ease-out-quart),
       color 0.35s var(--ease-out-quart);
-  }
-  .btn:hover {
-    transform: translateY(-2px);
   }
 
   /* Gold is the primary action: it is the brand's own signage accent. */
   .btn-gold {
     background: var(--color-gold-500);
+    border-color: var(--color-gold-500);
     color: var(--color-forest-950);
   }
   .btn-gold:hover {
     background: var(--color-gold-400);
+    border-color: var(--color-gold-400);
   }
 
   .btn-outline {
-    border: 1px solid color-mix(in oklab, var(--color-cream) 35%, transparent);
+    border-color: color-mix(in oklab, var(--color-cream) 35%, transparent);
     color: var(--color-cream);
   }
   .btn-outline:hover {
@@ -283,10 +315,12 @@
 
   .btn-dark {
     background: var(--color-forest-900);
+    border-color: var(--color-forest-900);
     color: var(--color-cream);
   }
   .btn-dark:hover {
     background: var(--color-forest-850);
+    border-color: var(--color-forest-850);
   }
 
   /* ---- photo reveals --------------------------------------------------- */
@@ -351,18 +385,6 @@
         oklch(0.185 0.055 139.5 / 0.1) 45%,
         transparent 70%
       );
-  }
-
-  /* Very fine film grain. Keeps large flat greens from banding and hides
-     softness in the web-sized source photos. */
-  .grain::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0.045;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 

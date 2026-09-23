@@ -13,7 +13,7 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
 
 <section id="rooms" aria-labelledby="rooms-title" class="rooms">
   <div class="gutter">
-    <SectionHead headingId="rooms-title" eyebrow={t('rooms.eyebrow')} title={t('rooms.title')} lede={t('rooms.lede')} />
+    <SectionHead headingId="rooms-title" title={t('rooms.title')} lede={t('rooms.lede')} />
   </div>
 
   <ul class="gutter rooms__list">
@@ -67,13 +67,12 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
 <style>
   .rooms {
     background: var(--color-forest-900);
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .rooms__list {
     list-style: none;
     margin: clamp(3rem, 6vw, 4.5rem) 0 0;
-    padding-inline: clamp(1.25rem, 5vw, 5rem);
     display: grid;
     gap: clamp(2.5rem, 5vw, 4.5rem);
   }
@@ -104,9 +103,9 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
 
   .room__cap {
     font-family: var(--font-sans);
-    font-size: 0.66rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }

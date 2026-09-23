@@ -9,14 +9,14 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section id="contact" aria-labelledby="contact-title" class="contact grain">
+<section id="contact" aria-labelledby="contact-title" class="contact">
   <div class="contact__bg">
     <Image src={exterior} alt="" widths={[900, 1280]} sizes="100vw" loading="lazy" class="contact__bg-img" data-parallax="0.04" />
   </div>
 
   <div class="gutter contact__grid">
     <div>
-      <SectionHead headingId="contact-title" eyebrow={t('contact.eyebrow')} title={t('contact.title')} />
+      <SectionHead headingId="contact-title" title={t('contact.title')} />
 
       <dl class="contact__details">
         <div>
@@ -94,7 +94,7 @@ const t = useTranslations(locale);
     isolation: isolate;
     overflow: hidden;
     background: var(--color-forest-950);
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .contact__bg {
@@ -147,9 +147,9 @@ const t = useTranslations(locale);
 
   .contact__details dt {
     font-family: var(--font-sans);
-    font-size: 0.64rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }
@@ -194,7 +194,7 @@ const t = useTranslations(locale);
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    border-radius: 6px;
+    border-radius: 4px;
     min-height: 24rem;
     display: flex;
     align-items: flex-end;
@@ -234,9 +234,9 @@ const t = useTranslations(locale);
 
   .location__eyebrow {
     font-family: var(--font-sans);
-    font-size: 0.66rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--color-gold-500);
   }

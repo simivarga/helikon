@@ -31,7 +31,6 @@ function parts(text: string) {
   <article class="legal" aria-labelledby="legal-title">
     <header class="gutter legal__head">
       <div class="legal__measure">
-        <p class="eyebrow legal__eyebrow">{doc.eyebrow}</p>
         <h1 id="legal-title" class="legal__title">{doc.heading}</h1>
         <p class="legal__lede">{doc.lede}</p>
         <p class="legal__updated">
@@ -105,13 +104,7 @@ function parts(text: string) {
     margin-inline: auto;
   }
 
-  .legal__eyebrow {
-    color: var(--color-gold-500);
-    font-size: 0.78rem;
-  }
-
   .legal__title {
-    margin-top: 1.1rem;
     font-size: var(--text-display-sm);
   }
 
@@ -191,12 +184,15 @@ function parts(text: string) {
     text-decoration-thickness: 2px;
   }
 
+  /* A quiet boxed address: a full hairline and a lighter sand, rather than
+     a coloured bar down one side. */
   .legal__contact {
     display: grid;
     gap: 0.1rem;
     padding: 1.1rem 1.3rem;
-    border-left: 2px solid var(--color-bronze-600);
-    background: color-mix(in oklab, var(--color-sand-100) 70%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-forest-900) 16%, var(--color-sand-200));
+    border-radius: var(--radius-control);
+    background: var(--color-sand-100);
     font-style: normal;
   }
 

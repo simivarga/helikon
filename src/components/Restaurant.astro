@@ -36,7 +36,7 @@ const stats = [
     </div>
 
     <div class="restaurant__copy">
-      <SectionHead headingId="restaurant-title" eyebrow={t('restaurant.eyebrow')} title={t('restaurant.title')} lede={t('restaurant.body')} />
+      <SectionHead headingId="restaurant-title" title={t('restaurant.title')} lede={t('restaurant.body')} />
 
       <div class="restaurant__actions">
         <a href={FACTS.menuPdf} target="_blank" rel="noopener" class="btn btn-dark">{t('restaurant.menuCta')}</a>
@@ -59,7 +59,7 @@ const stats = [
 
 <style>
   .restaurant {
-    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-block: var(--spacing-section);
   }
 
   .restaurant__grid {
@@ -146,9 +146,9 @@ const stats = [
 
   .restaurant__stats dt {
     font-family: var(--font-sans);
-    font-size: 0.66rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-bronze-600);
   }

@@ -262,9 +262,9 @@ const hotelLinks = [
 
   .rp__cap {
     margin-top: clamp(1.25rem, 3vw, 2rem);
-    font-size: 0.7rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }
@@ -309,9 +309,9 @@ const hotelLinks = [
   }
 
   .rp__label {
-    font-size: 0.66rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }
@@ -350,10 +350,9 @@ const hotelLinks = [
     color: var(--color-cream-muted);
   }
 
-  /* The site's shared buttons are fully rounded; buttons introduced on the
-     room pages use a tight radius instead. */
+  /* A little more compact than the shared button to fit the side panel; the
+     radius comes from the shared .btn. */
   .rp__btn {
-    border-radius: 3px;
     padding: 0.85rem 1.35rem;
     font-size: 0.86rem;
   }
@@ -464,9 +463,9 @@ const hotelLinks = [
   }
 
   .rp__facts dt {
-    font-size: 0.64rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-gold-500);
   }
@@ -622,9 +621,9 @@ const hotelLinks = [
   }
 
   .rp__other-cap {
-    font-size: 0.62rem;
+    font-size: var(--text-label);
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-gold-500);
   }
