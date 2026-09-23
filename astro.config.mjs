@@ -27,6 +27,7 @@ const SUBSET_BY_RANGE = [
   ['latin-ext', 'U+0100-02BA'],
   ['latin', 'U+0000-00FF'],
 ];
+/** @type {Record<string, string[]>} */
 const NEEDED = {
   // Ukrainian's і ї є ґ all sit in the base cyrillic range, but the hryvnia
   // sign ₴ (U+20B4) is filed under cyrillic-ext and appears in every salt-room
@@ -36,6 +37,7 @@ const NEEDED = {
   en: ['latin'],
 };
 
+/** @returns {import('astro').AstroIntegration} */
 function localeFontPreloads() {
   return {
     name: 'helikon:locale-font-preloads',
