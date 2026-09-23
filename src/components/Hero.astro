@@ -56,9 +56,8 @@ const reviewNoun = plural(locale, FACTS.ratingCount, {
         <span class="hero__score-max">/ 10</span>
       </span>
       <span class="hero__meta-sep" aria-hidden="true"></span>
-      <span>{`${formatNumber(locale, FACTS.ratingCount)} ${reviewNoun}`}</span>
-      <span class="hero__meta-sep" aria-hidden="true"></span>
-      <span>{t('hero.rating')}</span>
+      {/* One unit, so a narrow screen never wraps it with a dangling rule. */}
+      <span>{`${formatNumber(locale, FACTS.ratingCount)} ${reviewNoun} ${t('hero.rating')}`}</span>
     </div>
 
     <div class="hero__actions" style="--d:0.3s">
