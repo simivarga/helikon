@@ -1,19 +1,32 @@
 ---
 import Stars from './Stars.astro';
 import { FACTS } from '../i18n/ui';
-import { getLocaleFromUrl, useTranslations } from '../i18n/utils';
+import { legal } from '../i18n/legal';
+import { getLocaleFromUrl, useTranslations, localePath } from '../i18n/utils';
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const year = 2026;
 
+// The section anchors only exist on the home page. Elsewhere (the legal pages)
+// a bare "#rooms" would go nowhere, so point them back at the home page.
+const home = localePath(locale);
+const onHome = Astro.url.pathname === home;
+const anchor = (id: string) => (onHome ? `#${id}` : `${home}#${id}`);
+
 const explore = [
-  { key: 'nav.rooms', href: '#rooms' },
-  { key: 'nav.pool', href: '#pool' },
-  { key: 'nav.restaurant', href: '#restaurant' },
-  { key: 'nav.wellness', href: '#wellness' },
-  { key: 'nav.events', href: '#events' },
-  { key: 'nav.contact', href: '#contact' },
+  { key: 'nav.rooms', href: anchor('rooms') },
+  { key: 'nav.pool', href: anchor('pool') },
+  { key: 'nav.restaurant', href: anchor('restaurant') },
+  { key: 'nav.wellness', href: anchor('wellness') },
+  { key: 'nav.events', href: anchor('events') },
+  { key: 'nav.contact', href: anchor('contact') },
+];
+
+const legalCopy = legal[locale];
+const legalLinks = [
+  { label: legalCopy.links.privacy, href: localePath(locale, 'privacy') },
+  { label: legalCopy.links.terms, href: localePath(locale, 'terms') },
 ];
 
 const socials = [
@@ -58,6 +71,15 @@ const socials = [
 
   <div class="gutter footer__bottom">
     <span>© {year} Hotel Helikon. {t('footer.rights')}</span>
+    <nav class="footer__legal" aria-label={legalCopy.linksLabel}>
+      {
+        legalLinks.map((link) => (
+          <a href={link.href} aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
     <span>{t('site.tagline')}</span>
   </div>
 </footer>
@@ -165,5 +187,31 @@ const socials = [
     border-top: 1px solid color-mix(in oklab, var(--color-cream) 10%, transparent);
     font-size: 0.78rem;
     color: color-mix(in oklab, var(--color-cream-muted) 80%, transparent);
+  }
+
+  .footer__bottom > * {
+    align-self: center;
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.4rem;
+  }
+
+  .footer__legal a {
+    /* Small type, full-size tap target. */
+    display: inline-block;
+    padding-block: 0.7rem;
+    color: var(--color-cream-muted);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-cream-muted) 40%, transparent);
+    text-underline-offset: 0.25em;
+    transition: color 0.3s var(--ease-out-quart);
+  }
+
+  .footer__legal a:hover,
+  .footer__legal a[aria-current='page'] {
+    color: var(--color-cream);
   }
 </style>
