@@ -51,7 +51,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Як можна оплатити проживання?',
-        a: 'Згідно з правилами готелю на Booking.com, оплата приймається лише готівкою. Якщо хочете розрахуватися карткою, уточніть це на рецепції до приїзду.',
+        a: 'Оплатити можна готівкою або банківською карткою.',
       },
       {
         q: 'Як далеко готель від Берегового?',
@@ -91,7 +91,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Hogyan fizethetek?',
-        a: 'A Booking.com-on közzétett házirend szerint a szálloda csak készpénzt fogad el. Ha kártyával fizetnél, érkezés előtt kérdezz rá a recepción.',
+        a: 'Készpénzzel és bankkártyával is fizethetsz.',
       },
       {
         q: 'Milyen messze van a szálloda Beregszásztól?',
@@ -131,7 +131,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'How can I pay?',
-        a: 'According to the hotel’s house rules on Booking.com, payment is in cash only. If you would like to pay by card, ask reception before you arrive.',
+        a: 'You can pay in cash or by card.',
       },
       {
         q: 'How far is Hotel Helikon from Berehove?',
