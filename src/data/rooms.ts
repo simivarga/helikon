@@ -17,6 +17,9 @@ function photosFor(key: string): ImageMetadata[] {
 export interface Room {
   /** i18n key stem: room.<key>.name / .desc */
   key: string;
+  /** URL segment of the room's own page, identical in every locale so the
+      language switcher and hreflang can swap only the locale prefix. */
+  slug: string;
   /** UAH per night, from hotel-helikon.com (checked 2026-08-01). */
   price: number;
   capacity: 'cap2' | 'cap3' | 'cap4';
@@ -26,13 +29,16 @@ export interface Room {
   amenities: string[];
 }
 
+/** Maximum number of guests for each capacity label. */
+export const GUESTS: Record<Room['capacity'], number> = { cap2: 2, cap3: 3, cap4: 4 };
+
 const BASE = ['ac', 'bath', 'tv', 'wifi', 'sound'];
 
 export const ROOMS: Room[] = [
-  { key: 'mansard', price: 1800, capacity: 'cap2', amenities: [...BASE, 'patio'], photos: photosFor('mansard') },
-  { key: 'standard', price: 2200, capacity: 'cap2', amenities: [...BASE, 'balcony'], photos: photosFor('standard') },
-  { key: 'standard3', price: 3000, capacity: 'cap3', amenities: [...BASE, 'patio'], photos: photosFor('standard3') },
-  { key: 'half_lux', price: 2800, capacity: 'cap2', amenities: [...BASE, 'patio'], photos: photosFor('half_lux') },
-  { key: 'lux', price: 4200, capacity: 'cap4', amenities: [...BASE, 'patio', 'fridge'], photos: photosFor('lux') },
-  { key: 'family', price: 4200, capacity: 'cap4', amenities: [...BASE, 'patio', 'fridge'], photos: photosFor('family') },
+  { key: 'mansard', slug: 'mansard', price: 1800, capacity: 'cap2', amenities: [...BASE, 'patio'], photos: photosFor('mansard') },
+  { key: 'standard', slug: 'standard-double', price: 2200, capacity: 'cap2', amenities: [...BASE, 'balcony'], photos: photosFor('standard') },
+  { key: 'standard3', slug: 'standard-triple', price: 3000, capacity: 'cap3', amenities: [...BASE, 'patio'], photos: photosFor('standard3') },
+  { key: 'half_lux', slug: 'junior-suite', price: 2800, capacity: 'cap2', amenities: [...BASE, 'patio'], photos: photosFor('half_lux') },
+  { key: 'lux', slug: 'suite', price: 4200, capacity: 'cap4', amenities: [...BASE, 'patio', 'fridge'], photos: photosFor('lux') },
+  { key: 'family', slug: 'family-suite', price: 4200, capacity: 'cap4', amenities: [...BASE, 'patio', 'fridge'], photos: photosFor('family') },
 ];

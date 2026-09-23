@@ -7,13 +7,19 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const alternates = alternatePaths(Astro.url.pathname);
 
+// Section anchors live on the home page. Elsewhere (a room page) they have to
+// carry the home path, or "#pool" would look for a section that is not there.
+const home = localePath(locale);
+const onHome = Astro.url.pathname.replace(/\/?$/, '/') === home;
+const section = (id: string) => (onHome ? `#${id}` : `${home}#${id}`);
+
 const nav = [
-  { key: 'nav.rooms', href: '#rooms' },
-  { key: 'nav.pool', href: '#pool' },
-  { key: 'nav.restaurant', href: '#restaurant' },
-  { key: 'nav.wellness', href: '#wellness' },
-  { key: 'nav.events', href: '#events' },
-  { key: 'nav.contact', href: '#contact' },
+  { key: 'nav.rooms', href: section('rooms') },
+  { key: 'nav.pool', href: section('pool') },
+  { key: 'nav.restaurant', href: section('restaurant') },
+  { key: 'nav.wellness', href: section('wellness') },
+  { key: 'nav.events', href: section('events') },
+  { key: 'nav.contact', href: section('contact') },
 ];
 ---
 

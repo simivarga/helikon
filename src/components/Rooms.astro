@@ -4,7 +4,7 @@ import PhotoCarousel from './PhotoCarousel.astro';
 import AmenityIcon from './AmenityIcon.astro';
 import { ROOMS } from '../data/rooms';
 import { FACTS } from '../i18n/ui';
-import { getLocaleFromUrl, useTranslations, formatNumber } from '../i18n/utils';
+import { getLocaleFromUrl, useTranslations, formatNumber, localePath } from '../i18n/utils';
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
@@ -49,6 +49,10 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
               </p>
               <a href={FACTS.booking} target="_blank" rel="noopener" class="btn btn-gold room__book">
                 {t('rooms.book')}
+              </a>
+              <a href={localePath(locale, `rooms/${room.slug}`)} class="room__details">
+                {t('rooms.details')}
+                <span class="sr-only">: {t(`room.${room.key}.name`)}</span>
               </a>
             </div>
           </div>
@@ -203,6 +207,23 @@ const currency = locale === 'uk' ? '₴' : 'UAH';
   .room__book {
     padding: 0.78rem 1.5rem;
     font-size: 0.85rem;
+  }
+
+  /* Secondary to the booking button: a quiet text link to the room's page. */
+  .room__details {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-cream);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-gold-500) 55%, transparent);
+    text-underline-offset: 4px;
+    transition: color 0.3s var(--ease-out-quart);
+  }
+  .room__details:hover {
+    color: var(--color-gold-500);
   }
 
   .rooms__note {

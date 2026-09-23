@@ -1,0 +1,648 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PhotoCarousel from './PhotoCarousel.astro';
+import AmenityIcon from './AmenityIcon.astro';
+import { ROOMS, GUESTS, type Room } from '../data/rooms';
+import { FACTS } from '../i18n/ui';
+import { getLocaleFromUrl, useTranslations, formatNumber, localePath, DEFAULT_LOCALE } from '../i18n/utils';
+import { useRoomPageStrings } from '../i18n/rooms-page';
+
+interface Props {
+  room: Room;
+}
+const { room } = Astro.props;
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const rp = useRoomPageStrings(locale);
+const currency = locale === 'uk' ? '₴' : 'UAH';
+
+const name = t(`room.${room.key}.name`);
+const desc = t(`room.${room.key}.desc`);
+const cap = t(room.capacity);
+const capSentence = cap.charAt(0).toLocaleUpperCase(locale) + cap.slice(1);
+const price = formatNumber(locale, room.price);
+
+// Longest room name still fits 60 characters with the place qualifier; if a
+// future name does not, the brand alone is kept rather than a truncated title.
+const fullTitle = rp('rp.metaTitle', { name });
+const title = fullTitle.length <= 60 ? fullTitle : `${name} | ${rp('rp.hotel')}`;
+const description = rp('rp.metaDesc', { name, cap: capSentence, price });
+
+const home = localePath(locale);
+const roomsAnchor = `${home}#rooms`;
+const others = ROOMS.filter((r) => r.slug !== room.slug);
+
+// Absolute URLs for structured data. Every path here already carries
+// BASE_URL (localePath and Astro's asset URLs both include it), so resolving
+// against the site origin cannot drop a project-page prefix.
+const site = Astro.site ?? new URL(Astro.url.origin);
+const abs = (path: string) => new URL(path, site).href;
+const pageUrl = abs(Astro.url.pathname);
+// The hotel entity is declared once, at the site root (the Ukrainian home page).
+const hotelId = `${abs(localePath(DEFAULT_LOCALE))}#hotel`;
+
+const roomSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HotelRoom',
+  '@id': `${pageUrl}#room`,
+  url: pageUrl,
+  name,
+  description: desc,
+  image: room.photos.map((p) => abs(p.src)),
+  occupancy: { '@type': 'QuantitativeValue', maxValue: GUESTS[room.capacity], unitCode: 'C62' },
+  amenityFeature: room.amenities.map((a) => ({
+    '@type': 'LocationFeatureSpecification',
+    name: t(`am.${a}`),
+    value: true,
+  })),
+  containedInPlace: { '@type': 'Hotel', '@id': hotelId, name: rp('rp.hotel') },
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: rp('rp.home'), item: abs(home) },
+    { '@type': 'ListItem', position: 2, name: t('nav.rooms'), item: abs(roomsAnchor) },
+    { '@type': 'ListItem', position: 3, name, item: pageUrl },
+  ],
+};
+
+const facts = [
+  { label: rp('rp.capacity'), value: cap },
+  { label: rp('rp.breakfast'), value: rp('rp.breakfastValue') },
+  { label: rp('rp.checkIn'), value: rp('rp.checkInValue', { time: FACTS.checkIn }) },
+  { label: rp('rp.checkOut'), value: rp('rp.checkOutValue', { time: FACTS.checkOut }) },
+  { label: rp('rp.parking'), value: rp('rp.parkingValue') },
+];
+
+const hotelLinks = [
+  { href: `${home}#pool`, label: rp('rp.hotel.pool'), note: rp('rp.hotel.poolNote') },
+  { href: `${home}#restaurant`, label: rp('rp.hotel.restaurant'), note: rp('rp.hotel.restaurantNote') },
+  { href: `${home}#wellness`, label: rp('rp.hotel.wellness'), note: rp('rp.hotel.wellnessNote') },
+];
+---
+
+<Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(roomSchema)} is:inline />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} is:inline />
+
+  <article class="rp" aria-labelledby="room-title">
+    <header class="gutter rp__head">
+      <nav class="rp__crumbs" aria-label={rp('rp.breadcrumb')}>
+        <ol>
+          <li><a href={home}>{rp('rp.home')}</a></li>
+          <li><a href={roomsAnchor}>{t('nav.rooms')}</a></li>
+          <li aria-current="page">{name}</li>
+        </ol>
+      </nav>
+
+      <p class="rp__cap">{cap}</p>
+      <h1 id="room-title" class="rp__title">{name}</h1>
+      <p class="rp__lede">{desc}</p>
+    </header>
+
+    <div class="gutter rp__main">
+      <div class="rp__gallery">
+        <PhotoCarousel photos={room.photos} label={name} id={`page-${room.key}`} sizes="(max-width: 960px) 100vw, 58vw" eager />
+      </div>
+
+      <aside class="rp__panel" aria-label={rp('rp.priceLabel')}>
+        <p class="rp__label">{rp('rp.priceLabel')}</p>
+        <p class="rp__price">
+          <span class="rp__price-from">{t('rooms.from')}</span>
+          <span class="rp__price-value">{price}</span>
+          <span class="rp__price-cur">{currency}</span>
+          <span class="rp__price-night">{t('rooms.night')}</span>
+        </p>
+        <p class="rp__note">{rp('rp.priceNote')}</p>
+
+        <a href={FACTS.booking} target="_blank" rel="noopener" class="btn btn-gold rp__btn rp__btn--wide">
+          {rp('rp.bookOnline')}
+        </a>
+
+        <div class="rp__direct">
+          <h2 class="rp__direct-title">{rp('rp.directTitle')}</h2>
+          <p class="rp__direct-text">{rp('rp.directText')}</p>
+          <div class="rp__direct-actions">
+            <a href={`tel:${FACTS.phone}`} class="btn btn-outline rp__btn">
+              {rp('rp.call')}
+              <span class="rp__btn-num">{FACTS.phoneDisplay}</span>
+            </a>
+            <a href={FACTS.whatsapp} target="_blank" rel="noopener" class="btn btn-outline rp__btn">{rp('rp.whatsapp')}</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="gutter rp__details">
+      <section aria-labelledby="rp-amenities">
+        <h2 id="rp-amenities" class="rp__h2">{rp('rp.amenitiesTitle')}</h2>
+        <ul class="rp__amenities">
+          {
+            room.amenities.map((a) => (
+              <li>
+                <AmenityIcon name={a} />
+                <span>{t(`am.${a}`)}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section aria-labelledby="rp-stay">
+        <h2 id="rp-stay" class="rp__h2">{rp('rp.stayTitle')}</h2>
+        <dl class="rp__facts">
+          {
+            facts.map((f) => (
+              <div>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section aria-labelledby="rp-hotel">
+        <h2 id="rp-hotel" class="rp__h2">{rp('rp.hotelTitle')}</h2>
+        <ul class="rp__hotel">
+          {
+            hotelLinks.map((l) => (
+              <li>
+                <a href={l.href}>
+                  <span class="rp__hotel-name">{l.label}</span>
+                  <span class="rp__hotel-note">{l.note}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+
+    <section class="gutter rp__others" aria-labelledby="rp-others">
+      <div class="rp__others-head">
+        <h2 id="rp-others" class="rp__others-title">{rp('rp.otherTitle')}</h2>
+        <a href={roomsAnchor} class="rp__all">{rp('rp.allRooms')}</a>
+      </div>
+
+      <ul class="rp__others-list">
+        {
+          others.map((o) => (
+            <li>
+              <a href={localePath(locale, `rooms/${o.slug}`)} class="rp__other">
+                <span class="rp__other-media">
+                  <Image
+                    src={o.photos[0]}
+                    alt=""
+                    widths={[360, 540]}
+                    sizes="(max-width: 719px) 120px, (max-width: 1099px) 30vw, 18vw"
+                    loading="lazy"
+                  />
+                </span>
+                <span class="rp__other-cap">{t(o.capacity)}</span>
+                <span class="rp__other-name">{t(`room.${o.key}.name`)}</span>
+                <span class="rp__other-price">{rp('rp.from', { price: formatNumber(locale, o.price) })}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .rp {
+    background: var(--color-forest-900);
+    /* Clears the fixed header, which sits over the top of every page. */
+    padding-top: clamp(6.5rem, 12vw, 8.5rem);
+    padding-bottom: clamp(4rem, 9vw, 7rem);
+  }
+
+  /* ---- head ------------------------------------------------------------ */
+
+  .rp__crumbs ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--color-cream-muted);
+  }
+
+  .rp__crumbs li + li::before {
+    content: '/';
+    margin-inline: 0.6rem;
+    color: color-mix(in oklab, var(--color-gold-500) 60%, transparent);
+  }
+
+  .rp__crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-cream-muted);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-cream) 25%, transparent);
+    text-underline-offset: 3px;
+    transition: color 0.3s var(--ease-out-quart);
+  }
+  .rp__crumbs a:hover {
+    color: var(--color-gold-500);
+  }
+
+  .rp__crumbs [aria-current] {
+    color: var(--color-cream);
+  }
+
+  .rp__cap {
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .rp__title {
+    margin-top: 0.75rem;
+    font-size: var(--text-display-md);
+    max-width: 18ch;
+  }
+
+  .rp__lede {
+    margin-top: 1.1rem;
+    max-width: 48ch;
+    font-size: clamp(1.02rem, 1.4vw, 1.15rem);
+    color: color-mix(in oklab, var(--color-cream) 80%, transparent);
+  }
+
+  /* ---- gallery + booking panel ---------------------------------------- */
+
+  .rp__main {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+    align-items: start;
+    margin-top: clamp(2rem, 5vw, 3.25rem);
+  }
+
+  @media (min-width: 960px) {
+    .rp__main {
+      grid-template-columns: minmax(0, 1.55fr) minmax(19rem, 1fr);
+    }
+    .rp__panel {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+
+  .rp__panel {
+    padding: clamp(1.5rem, 3vw, 2.1rem);
+    border: 1px solid color-mix(in oklab, var(--color-gold-700) 38%, transparent);
+    border-radius: 4px;
+    background: var(--color-forest-950);
+  }
+
+  .rp__label {
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .rp__price {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .rp__price-from,
+  .rp__price-night {
+    font-size: 0.82rem;
+    color: var(--color-cream-muted);
+  }
+
+  .rp__price-value {
+    font-family: var(--font-display);
+    font-size: clamp(2.3rem, 4vw, 2.9rem);
+    line-height: 1;
+    color: var(--color-gold-500);
+  }
+
+  .rp__price-cur {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-gold-500);
+  }
+
+  .rp__note {
+    margin-top: 0.6rem;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: var(--color-cream-muted);
+  }
+
+  /* The site's shared buttons are fully rounded; buttons introduced on the
+     room pages use a tight radius instead. */
+  .rp__btn {
+    border-radius: 3px;
+    padding: 0.85rem 1.35rem;
+    font-size: 0.86rem;
+  }
+
+  .rp__btn--wide {
+    width: 100%;
+    margin-top: 1.4rem;
+  }
+
+  .rp__btn-num {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .rp__direct {
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-700) 30%, transparent);
+  }
+
+  .rp__direct-title {
+    font-size: 1.45rem;
+  }
+
+  .rp__direct-text {
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--color-cream-muted);
+  }
+
+  .rp__direct-actions {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1.2rem;
+  }
+
+  .rp__direct-actions .rp__btn {
+    flex-wrap: wrap;
+  }
+
+  /* ---- details --------------------------------------------------------- */
+
+  .rp__details {
+    display: grid;
+    gap: clamp(2.25rem, 5vw, 3.5rem);
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  @media (min-width: 960px) {
+    .rp__details {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(2rem, 4vw, 3.5rem);
+    }
+  }
+
+  .rp__details > section {
+    padding-top: 1.4rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-700) 30%, transparent);
+  }
+
+  .rp__h2 {
+    font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  }
+
+  .rp__amenities {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1.25rem;
+  }
+
+  @media (min-width: 960px) {
+    .rp__amenities {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rp__amenities li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--color-cream);
+    --amenity-icon-size: 1.2rem;
+  }
+
+  .rp__amenities :global(.amenity-icon) {
+    color: var(--color-gold-500);
+  }
+
+  .rp__facts {
+    display: grid;
+    gap: 1rem 1.25rem;
+    margin: 1.25rem 0 0;
+  }
+
+  /* Two short columns below the desktop layout, so five one-line facts do not
+     become a tall single stack on a phone. */
+  @media (max-width: 959px) {
+    .rp__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .rp__facts dt {
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .rp__facts dd {
+    margin: 0.2rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-cream);
+  }
+
+  .rp__hotel {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .rp__hotel li + li {
+    border-top: 1px solid color-mix(in oklab, var(--color-gold-700) 20%, transparent);
+  }
+
+  .rp__hotel a {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: 0.8rem;
+  }
+
+  .rp__hotel-name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.2;
+    color: var(--color-cream);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-gold-500) 40%, transparent);
+    text-underline-offset: 4px;
+    transition: color 0.3s var(--ease-out-quart);
+  }
+
+  .rp__hotel a:hover .rp__hotel-name {
+    color: var(--color-gold-500);
+  }
+
+  .rp__hotel-note {
+    font-size: 0.85rem;
+    color: var(--color-cream-muted);
+  }
+
+  /* ---- other rooms ----------------------------------------------------- */
+
+  .rp__others {
+    margin-top: clamp(4rem, 9vw, 6.5rem);
+  }
+
+  .rp__others-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--color-gold-700) 30%, transparent);
+  }
+
+  .rp__others-title {
+    font-size: var(--text-display-xs);
+  }
+
+  .rp__all {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-cream);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-gold-500) 55%, transparent);
+    text-underline-offset: 4px;
+    transition: color 0.3s var(--ease-out-quart);
+  }
+  .rp__all:hover {
+    color: var(--color-gold-500);
+  }
+
+  /* Phones: a compact list with a thumbnail beside the text. Five rooms in a
+     two-column grid left one card stranded on its own row. */
+  .rp__others-list {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (max-width: 719px) {
+    .rp__other {
+      grid-template-columns: 7.5rem minmax(0, 1fr);
+      grid-template-rows: auto auto 1fr;
+      column-gap: 1rem;
+      row-gap: 0.2rem;
+      align-content: center;
+    }
+    .rp__other-media {
+      grid-row: 1 / span 3;
+      margin-bottom: 0;
+    }
+    .rp__other-cap {
+      align-self: end;
+      margin-top: 0.35rem;
+    }
+    .rp__other-name {
+      font-size: 1.2rem;
+    }
+  }
+
+  @media (min-width: 720px) {
+    .rp__others-list {
+      margin-top: 1.75rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.75rem 1rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .rp__others-list {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  .rp__other {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .rp__other-media {
+    display: block;
+    overflow: hidden;
+    border-radius: 3px;
+    margin-bottom: 0.6rem;
+  }
+
+  .rp__other-media img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out-quart);
+  }
+
+  .rp__other:hover .rp__other-media img {
+    transform: scale(1.04);
+  }
+
+  .rp__other-cap {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold-500);
+  }
+
+  .rp__other-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.15;
+    color: var(--color-cream);
+    transition: color 0.3s var(--ease-out-quart);
+  }
+
+  .rp__other:hover .rp__other-name {
+    color: var(--color-gold-500);
+  }
+
+  .rp__other-price {
+    font-size: 0.82rem;
+    color: var(--color-cream-muted);
+  }
+</style>

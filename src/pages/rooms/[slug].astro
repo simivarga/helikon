@@ -1,0 +1,17 @@
+---
+import RoomPage from '../../components/RoomPage.astro';
+import { ROOMS, type Room } from '../../data/rooms';
+
+// One page per room. The slug is shared by all three locales, so the language
+// switcher and hreflang only ever swap the locale prefix.
+export function getStaticPaths() {
+  return ROOMS.map((room) => ({ params: { slug: room.slug }, props: { room } }));
+}
+
+interface Props {
+  room: Room;
+}
+const { room } = Astro.props;
+---
+
+<RoomPage room={room} />

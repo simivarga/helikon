@@ -10,8 +10,11 @@ interface Props {
   id: string;
   /** Must match the caller's real rendered width, not the default. */
   sizes?: string;
+  /** Load the first slide eagerly, for a carousel that is the page's opening
+      image. Everything else stays lazy. */
+  eager?: boolean;
 }
-const { photos, label, id, sizes = '(max-width: 900px) 100vw, 48vw' } = Astro.props;
+const { photos, label, id, sizes = '(max-width: 900px) 100vw, 48vw', eager = false } = Astro.props;
 
 // Arrow glyphs read poorly as accessible names, and were identical in every
 // locale. These describe the action instead.
@@ -28,15 +31,17 @@ const multiple = photos.length > 1;
     {
       photos.map((photo, i) => (
         <figure class="carousel__slide" data-slide aria-label={`${i + 1} / ${photos.length}`}>
-          {/* Always lazy. Every carousel on this page sits well below the fold,
-              so marking each first slide eager pulled ~677 kB of unseen
-              photography into the initial load. */}
+          {/* Lazy by default. Every carousel on the home page sits well below
+              the fold, so marking each first slide eager pulled ~677 kB of
+              unseen photography into the initial load. A room page opens on
+              its carousel, so there the first slide is the LCP image. */}
           <Image
             src={photo}
             alt={`${label} — ${i + 1}`}
             widths={[480, 720, 1000]}
             sizes={sizes}
-            loading="lazy"
+            loading={eager && i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={eager && i === 0 ? 'high' : undefined}
           />
         </figure>
       ))
