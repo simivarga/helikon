@@ -21,10 +21,10 @@ const halls = [
     <SectionHead headingId="events-title" eyebrow={t('events.eyebrow')} title={t('events.title')} lede={t('events.lede')} />
   </div>
 
-  <div class="gutter events__grid" data-reveal-group>
+  <div class="gutter events__grid">
     {
       halls.map((hall) => (
-        <article class="hall" data-reveal>
+        <article class="hall">
           <figure class="hall__media zoom-figure">
             <Image
               src={hall.image}
@@ -51,7 +51,7 @@ const halls = [
     />
   </figure>
 
-  <div class="gutter events__cta" data-reveal>
+  <div class="gutter events__cta">
     <div>
       <p class="events__call-label">{t('events.callLabel')}</p>
       <a href={`tel:${FACTS.phoneEvents}`} class="events__phone">{FACTS.phoneEventsDisplay}</a>

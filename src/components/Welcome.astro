@@ -18,18 +18,18 @@ const stats = [
 ---
 
 <section id="welcome" aria-labelledby="welcome-title" class="welcome section-light">
-  <div class="gutter welcome__grid" data-reveal-group>
+  <div class="gutter welcome__grid">
     <div class="welcome__copy">
       <SectionHead headingId="welcome-title" eyebrow={t('welcome.eyebrow')} title={t('welcome.title')} />
       <div class="welcome__body">
-        <p data-reveal>{t('welcome.body1')}</p>
-        <p data-reveal>{t('welcome.body2')}</p>
+        <p>{t('welcome.body1')}</p>
+        <p>{t('welcome.body2')}</p>
       </div>
 
       <dl class="welcome__stats">
         {
           stats.map((s) => (
-            <div class="welcome__stat" data-reveal>
+            <div class="welcome__stat">
               <dt>{s.label}</dt>
               <dd>{s.value}</dd>
             </div>

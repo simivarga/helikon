@@ -5,87 +5,110 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Touch screens scroll on the compositor while JS-driven transforms follow a
+// frame behind, which reads as jitter on iOS. Parallax is desktop-only.
+const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
+// `resize` must stay in the list: without it trigger positions went stale
+// whenever the window changed size. ignoreMobileResize still skips the
+// refresh caused by the mobile address bar showing and hiding.
+ScrollTrigger.config({
+  ignoreMobileResize: true,
+  autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load,resize',
+});
+
+/* ---- photo reveals ------------------------------------------------------ */
 
 /**
- * Reveal anything marked `data-reveal`. Children of a `data-reveal-group` are
- * staggered in document order, which keeps the markup free of index bookkeeping.
+ * Photographs marked `data-reveal="mask"` wipe up once, the first time they
+ * reach the bottom of the viewport. Text is never animated on scroll.
+ *
+ * - One-shot: an element is revealed at most once and never hidden again.
+ * - Anything already on screen at start-up, or scrolled past without being
+ *   seen (anchor jumps, hash on load), is shown instantly.
+ * - Photos that arrive together are staggered, capped at MAX_STAGGERED steps.
+ * - Hiding only starts once this script runs (`motion-ready`), so if it never
+ *   loads the photos are simply visible.
  */
-// Pending stagger timers, so a fast scroll cannot leave a stale timeout that
-// re-reveals an element the trigger has already marked as left.
-const pending = new WeakMap<HTMLElement, number>();
+const STAGGER_MS = 60;
+const MAX_STAGGERED = 3;
+// Start the wipe as the photo's top edge reaches this fraction of the
+// viewport height, i.e. just before it becomes visible.
+const TRIGGER_AT = 1.02;
 
-function clearPending(el: HTMLElement) {
-  const id = pending.get(el);
-  if (id !== undefined) {
-    window.clearTimeout(id);
-    pending.delete(el);
-  }
-}
-
-function showGroup(members: HTMLElement[]) {
-  members.forEach((el, i) => {
-    clearPending(el);
-    if (i === 0) {
-      el.classList.add('is-revealed');
-      return;
-    }
-    pending.set(
-      el,
-      window.setTimeout(() => {
-        pending.delete(el);
-        el.classList.add('is-revealed');
-      }, i * 70),
-    );
-  });
-}
-
-function hideGroup(members: HTMLElement[]) {
-  members.forEach((el) => {
-    clearPending(el);
-    el.classList.remove('is-revealed');
-  });
+function showInstantly(el: HTMLElement) {
+  el.style.transition = 'none';
+  el.classList.add('is-revealed');
+  // Hand the transition back to the stylesheet once the revealed state has
+  // been painted.
+  requestAnimationFrame(() => requestAnimationFrame(() => el.style.removeProperty('transition')));
 }
 
 function initReveals() {
-  const items = gsap.utils.toArray<HTMLElement>('[data-reveal]');
+  const pending = new Set(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+  if (!pending.size) return;
 
   if (prefersReducedMotion) {
-    items.forEach((el) => el.classList.add('is-revealed'));
+    pending.forEach((el) => el.classList.add('is-revealed'));
     return;
   }
 
-  // One trigger per group rather than per element. Every member of a group
-  // shared identical start/end bounds, so N triggers were doing one trigger's
-  // work and firing N separate callbacks in the same frame.
-  const groups = new Map<Element, HTMLElement[]>();
-  items.forEach((el) => {
-    const key = el.closest('[data-reveal-group]') ?? el;
-    const list = groups.get(key);
-    if (list) list.push(el);
-    else groups.set(key, [el]);
-  });
-
-  groups.forEach((members, trigger) => {
-    // Not `once`: the animation replays every time a section leaves the
-    // viewport and comes back, scrolling either way.
-    ScrollTrigger.create({
-      trigger,
-      start: 'top 88%',
-      end: 'bottom 8%',
-      onEnter: () => showGroup(members),
-      onEnterBack: () => showGroup(members),
-      onLeave: () => hideGroup(members),
-      onLeaveBack: () => hideGroup(members),
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      sweep(false);
     });
-  });
+  };
+
+  function sweep(initial: boolean) {
+    const vh = window.innerHeight;
+    // All reads first, then all writes, so the sweep never forces a layout
+    // between style changes.
+    const hits: { el: HTMLElement; passed: boolean }[] = [];
+    pending.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * TRIGGER_AT) hits.push({ el, passed: r.bottom <= 0 });
+    });
+
+    let staggered = 0;
+    hits.forEach(({ el, passed }) => {
+      pending.delete(el);
+      if (initial || passed) {
+        showInstantly(el);
+        return;
+      }
+      const delay = Math.min(staggered, MAX_STAGGERED - 1) * STAGGER_MS;
+      staggered++;
+      if (delay) el.style.transitionDelay = `${delay}ms`;
+      el.classList.add('is-revealed');
+    });
+
+    if (!pending.size) {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    }
+  }
+
+  // Whatever is already in view is shown as it is before hiding switches on,
+  // so the first paint never flashes a photo away and back.
+  sweep(true);
+  document.documentElement.classList.add('motion-ready');
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
 }
 
-/** Slow drift on elements marked `data-parallax="0.15"` (fraction of height). */
+/* ---- parallax ----------------------------------------------------------- */
+
+/** Slow drift on elements marked `data-parallax="0.05"` (fraction of height). */
 function initParallax() {
-  if (prefersReducedMotion) return;
+  if (prefersReducedMotion || coarsePointer) return;
 
   gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
-    const strength = parseFloat(el.dataset.parallax || '0.12');
+    const strength = parseFloat(el.dataset.parallax || '0.05');
     gsap.fromTo(
       el,
       { yPercent: -strength * 100 },
@@ -99,9 +122,7 @@ function initParallax() {
           // No numeric scrub: Lenis already smooths the scroll source, and
           // stacking a second lag makes the parallax feel detached.
           scrub: true,
-          // Promote only while actually scrubbing. Setting will-change at load
-          // kept three large photographs on their own GPU layers for the whole
-          // session, even if the user never scrolled to them.
+          // Promote only while actually scrubbing, not for the whole session.
           onToggle: (self) => {
             el.style.willChange = self.isActive ? 'transform' : '';
           },
@@ -111,26 +132,23 @@ function initParallax() {
   });
 }
 
+/* ---- smooth scroll ------------------------------------------------------ */
+
 function initSmoothScroll() {
   if (prefersReducedMotion) return;
 
   const lenis = new Lenis({
     // `lerp`, not `duration`: Lenis applies duration+easing to *every* wheel
-    // tick, resetting the ease to t=0 each time. With an ease-out curve that
-    // keeps the scroll permanently in the fast opening of the curve, which is
-    // what read as bumpy. `lerp` damps continuously and stays velocity-stable.
+    // tick, resetting the ease to t=0 each time. `lerp` damps continuously
+    // and stays velocity-stable.
     lerp: 0.1,
     smoothWheel: true,
     wheelMultiplier: 1,
-    // touchMultiplier is deliberately absent: with syncTouch false Lenis never
-    // touches touch events, so it was dead configuration.
+    // Touch scrolling stays native.
     syncTouch: false,
   });
 
   lenis.on('scroll', ScrollTrigger.update);
-  // Let ScrollTrigger settle triggers immediately after a fast scroll instead
-  // of firing every intermediate one.
-  ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 
@@ -157,6 +175,24 @@ function initSmoothScroll() {
   });
 }
 
+/* ---- layout changes ----------------------------------------------------- */
+
+/**
+ * Refresh trigger positions whenever the document height changes after the
+ * initial layout (late fonts, anything the `load` refresh missed).
+ */
+function watchLayout() {
+  let lastHeight = document.documentElement.scrollHeight;
+  let timer = 0;
+  new ResizeObserver(() => {
+    const height = document.documentElement.scrollHeight;
+    if (height === lastHeight) return;
+    lastHeight = height;
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => ScrollTrigger.refresh(), 150);
+  }).observe(document.body);
+}
+
 /** Condense the header once the hero is behind us. */
 function initHeader() {
   const header = document.querySelector<HTMLElement>('[data-header]');
@@ -173,6 +209,7 @@ function init() {
   initReveals();
   initParallax();
   initHeader();
+  watchLayout();
   ScrollTrigger.refresh();
 }
 

@@ -14,38 +14,38 @@ const t = useTranslations(locale);
     <Image src={exterior} alt="" widths={[900, 1280]} sizes="100vw" loading="lazy" class="contact__bg-img" data-parallax="0.04" />
   </div>
 
-  <div class="gutter contact__grid" data-reveal-group>
+  <div class="gutter contact__grid">
     <div>
       <SectionHead headingId="contact-title" eyebrow={t('contact.eyebrow')} title={t('contact.title')} />
 
       <dl class="contact__details">
-        <div data-reveal>
+        <div>
           <dt>{t('contact.address')}</dt>
           <dd>{t('contact.addressValue')}</dd>
         </div>
-        <div data-reveal>
+        <div>
           <dt>{t('contact.hours')}</dt>
           <dd>{t('contact.hoursValue')}</dd>
         </div>
-        <div data-reveal>
+        <div>
           <dt>{t('contact.checkin')}</dt>
           <dd>{`${FACTS.checkIn} / ${FACTS.checkOut}`}</dd>
         </div>
-        <div data-reveal>
+        <div>
           <dt>{t('contact.reception')}</dt>
           <dd><a href={`tel:${FACTS.phone}`}>{FACTS.phoneDisplay}</a></dd>
         </div>
-        <div data-reveal>
+        <div>
           <dt>{t('contact.events')}</dt>
           <dd><a href={`tel:${FACTS.phoneEvents}`}>{FACTS.phoneEventsDisplay}</a></dd>
         </div>
-        <div data-reveal>
+        <div>
           <dt>{t('contact.email')}</dt>
           <dd><a href={`mailto:${FACTS.email}`}>{FACTS.email}</a></dd>
         </div>
       </dl>
 
-      <div class="contact__actions" data-reveal>
+      <div class="contact__actions">
         <a href={`tel:${FACTS.phone}`} class="btn btn-gold">{t('contact.callCta')}</a>
         <a href={FACTS.whatsapp} target="_blank" rel="noopener" class="btn btn-outline">WhatsApp</a>
         <a href={FACTS.viber} class="btn btn-outline">Viber</a>
@@ -55,7 +55,7 @@ const t = useTranslations(locale);
     <!-- A drawn location panel rather than an embedded map: third-party map
          iframes are consent-gated and frequently render as an empty box, and
          the contour drawing carries the brand better than a grey tile. -->
-    <div class="location" data-reveal>
+    <div class="location">
       <svg class="location__contours" viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <g fill="none" stroke="currentColor" stroke-width="1">
           <path d="M-20 55 C80 25 140 85 220 55 S360 15 440 65" />
