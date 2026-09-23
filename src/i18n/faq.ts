@@ -30,7 +30,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
   uk: {
     eyebrow: 'Питання та відповіді',
     title: 'Що варто знати перед бронюванням',
-    more: 'Маєш інше питання? Напиши або зателефонуй нам.',
+    more: 'Маєте інше питання? Напишіть або зателефонуйте нам.',
     moreCta: 'Контакти',
     items: [
       {
@@ -43,7 +43,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Чи можна приїхати з домашньою твариною?',
-        a: 'Так, з домашніми тваринами можна. За них може стягуватися додаткова плата, тому попередь нас про тварину під час бронювання.',
+        a: 'Так, з домашніми тваринами можна. За тварину може бути додаткова плата, тож, будь ласка, попередьте нас під час бронювання.',
       },
       {
         q: 'О котрій заїзд і виїзд?',
@@ -51,7 +51,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Як можна оплатити проживання?',
-        a: 'Згідно з правилами готелю на Booking.com, оплата приймається лише готівкою. Якщо хочеш розрахуватися карткою, уточни це на рецепції до приїзду.',
+        a: 'Згідно з правилами готелю на Booking.com, оплата приймається лише готівкою. Якщо хочете розрахуватися карткою, уточніть це на рецепції до приїзду.',
       },
       {
         q: 'Як далеко готель від Берегового?',
@@ -83,7 +83,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Hozhatok háziállatot?',
-        a: 'Igen, háziállattal is jöhetsz. Előfordulhat, hogy felárat kérünk érte, ezért foglaláskor jelezd, hogy hozod.',
+        a: 'Igen, háziállattal is jöhetsz. Előfordulhat, hogy felárat kérünk érte, ezért foglaláskor jelezd, hogy állattal érkezel.',
       },
       {
         q: 'Mikor lehet érkezni és távozni?',
@@ -95,7 +95,7 @@ export const FAQ: Record<Locale, FaqCopy> = {
       },
       {
         q: 'Milyen messze van a szálloda Beregszásztól?',
-        a: 'Körülbelül 6 kilométerre. A Hotel Helikon Makkosjánosiban, a Beregszászi járásban áll, Kárpátalján.',
+        a: 'Körülbelül 6 kilométerre. A Hotel Helikon Makkosjánosiban található, a Beregszászi járásban, Kárpátalján.',
       },
       {
         q: 'Mikor lehet használni a medencét?',

@@ -283,7 +283,7 @@ export const legal: Record<Locale, LegalLocale> = {
                 'Nincsenek sütik. Az oldal nem helyez el sütit, és mást sem tárol a böngésződben, ezért sütikről szóló felugró ablakot sem látsz.',
                 'Nincs látogatottságmérés, statisztika, hirdetési pixel vagy más követőkód.',
                 'Nincs űrlap. Az oldalon nem tudsz személyes adatot megadni: telefonon, e-mailben vagy üzenetküldőn érsz el minket.',
-                'A betűtípusok és a képek ugyanarról a szerverről töltődnek be, mint maga a weboldal. Amikor megnyitsz egy oldalt, a böngésződ nem fordul sem a Google Fontshoz, sem más külső szolgáltatáshoz.',
+                'A betűtípusok és a képek ugyanarról a szerverről töltődnek be, mint maga a weboldal. Amikor megnyitsz egy oldalt, a böngésződ nem kér le semmit sem a Google Fontstól, sem más külső szolgáltatástól.',
               ],
             },
           ],
@@ -370,7 +370,7 @@ export const legal: Record<Locale, LegalLocale> = {
         'A Hotel Helikon weboldalának felhasználási feltételei, és amit érdemes tudnod az utazás előtt: tájékoztató árak, a foglalás visszaigazolása, érkezés és távozás.',
       eyebrow: 'Jogi információk',
       heading: 'Felhasználási feltételek',
-      lede: 'Ezek a feltételek a weboldal használatára és a nálunk töltött idő alapjaira vonatkoznak. Ami kifejezetten a te foglalásodat érinti, azt foglaláskor igazoljuk vissza.',
+      lede: 'Ezek a feltételek a weboldal használatára és a nálunk töltött idő legfontosabb tudnivalóira vonatkoznak. Ami kifejezetten a te foglalásodat érinti, azt foglaláskor igazoljuk vissza.',
       sections: [
         {
           heading: 'A weboldalról',
@@ -401,7 +401,7 @@ export const legal: Record<Locale, LegalLocale> = {
               p: 'Ha közvetlenül nálunk foglalsz (telefonon, e-mailben vagy üzenetküldőn), az érvényes, amit írásban visszaigazolunk neked.',
             },
             {
-              p: 'A lemondás, az előleg vagy kaució, a fizetési módok, a gyerekkel vagy háziállattal érkezés és a pótágy feltételeit foglaláskor egyeztetjük. Ezekre itt nem teszünk közzé általános szabályt, ezért kérdezz nyugodtan.',
+              p: 'A lemondás, az előleg vagy kaució, a fizetési módok, a gyerekekre, a háziállatokra és a pótágyra vonatkozó feltételeket foglaláskor egyeztetjük. Ezekre itt nem teszünk közzé általános szabályt, ezért kérdezz nyugodtan.',
             },
           ],
         },
@@ -556,13 +556,13 @@ export const legal: Record<Locale, LegalLocale> = {
         'Terms for using the Hotel Helikon website and what to know before a stay in Jánosi: indicative prices, how bookings are confirmed, check-in and check-out times.',
       eyebrow: 'Legal',
       heading: 'Terms and conditions',
-      lede: 'These terms cover the use of this website and the basics of staying with us. Anything specific to your own stay is what we confirm to you when you book.',
+      lede: 'These terms cover the use of this website and the basics of staying with us. We will confirm anything specific to your own stay when you book.',
       sections: [
         {
           heading: 'About this website',
           blocks: [
             {
-              p: `This website is run by Hotel Helikon (${INLINE_ADDRESS.en}). It tells you about the hotel, the rooms, the restaurant and our services. Its content is for information only, and nothing on it makes a booking by itself.`,
+              p: `This website is run by Hotel Helikon (${INLINE_ADDRESS.en}). It tells you about the hotel, the rooms, the restaurant and our services. Its content is for information only, and nothing on it constitutes a booking.`,
             },
             {
               p: 'We keep the information as current as we can, but things like opening hours, services or the pool season can change. If something matters for your plans, check with us.',
