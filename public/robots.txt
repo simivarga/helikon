@@ -1,5 +1,6 @@
-# Production robots policy. Preview deploys additionally send
-# `<meta name="robots" content="noindex, nofollow">` via PUBLIC_PREVIEW=1.
+# Fallback for `astro dev` only. `astro build` overwrites this file in dist/
+# from SITE_URL and BASE_PATH (see robotsTxt() in astro.config.mjs), so the
+# sitemap URL always matches the host the build is for.
 User-agent: *
 Allow: /
 

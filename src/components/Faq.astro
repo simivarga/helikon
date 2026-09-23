@@ -1,0 +1,202 @@
+---
+import SectionHead from './SectionHead.astro';
+import { FAQ, jsonLd } from '../i18n/faq';
+import { getLocaleFromUrl } from '../i18n/utils';
+
+const locale = getLocaleFromUrl(Astro.url);
+const copy = FAQ[locale];
+
+// Same identifiers Base.astro gives the page and the hotel, so the FAQ joins
+// that graph instead of floating as a separate, unattached entity.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const home = new URL(`${import.meta.env.BASE_URL}/`.replace(/\/{2,}/g, '/'), Astro.site).href;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${canonical}#faq`,
+  inLanguage: locale,
+  isPartOf: { '@id': `${canonical}#webpage` },
+  about: { '@id': `${home}#hotel` },
+  mainEntity: copy.items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<section id="faq" aria-labelledby="faq-title" class="faq section-light">
+  <div class="gutter faq__grid" data-reveal-group>
+    <div class="faq__head">
+      <SectionHead headingId="faq-title" eyebrow={copy.eyebrow} title={copy.title} />
+      <p class="faq__more" data-reveal>
+        {copy.more}{' '}
+        <a href="#contact">{copy.moreCta}</a>
+      </p>
+    </div>
+
+    <div class="faq__list">
+      {
+        copy.items.map((item) => (
+          <details class="faq__item" data-reveal>
+            <summary class="faq__q">
+              <span>{item.q}</span>
+              <span class="faq__icon" aria-hidden="true" />
+            </summary>
+            <p class="faq__a">{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={jsonLd(schema)} is:inline />
+</section>
+
+<style>
+  .faq {
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+  }
+
+  .faq__grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .faq__grid {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+
+    /* The questions run long; the heading stays in view beside them. */
+    .faq__head {
+      position: sticky;
+      top: 7rem;
+    }
+  }
+
+  .faq__more {
+    margin-top: 1.75rem;
+    max-width: 30ch;
+    font-size: 0.95rem;
+    color: color-mix(in oklab, var(--color-forest-900) 78%, transparent);
+  }
+
+  .faq__more a {
+    font-weight: 600;
+    color: var(--color-bronze-600);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-bronze-600) 45%, transparent);
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+
+  .faq__item {
+    border-top: 1px solid color-mix(in oklab, var(--color-forest-900) 16%, transparent);
+    /* Lets the answer's height animate where the browser supports it; others
+       simply open instantly. */
+    interpolate-size: allow-keywords;
+  }
+
+  .faq__item:last-child {
+    border-bottom: 1px solid color-mix(in oklab, var(--color-forest-900) 16%, transparent);
+  }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.35rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: clamp(1.18rem, 1rem + 0.55vw, 1.45rem);
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--color-forest-900);
+    transition: color 0.3s var(--ease-out-quart);
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q:hover {
+    color: var(--color-bronze-600);
+  }
+
+  /* A drawn plus that turns into a minus: two hairlines, the vertical one
+     folds flat when the answer opens. */
+  .faq__icon {
+    position: relative;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in oklab, var(--color-bronze-600) 55%, transparent);
+    transition:
+      background-color 0.35s var(--ease-out-quart),
+      border-color 0.35s var(--ease-out-quart);
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.8rem;
+    height: 1.5px;
+    background: var(--color-bronze-600);
+    transform: translate(-50%, -50%);
+    transition:
+      transform 0.45s var(--ease-out-expo),
+      background-color 0.35s var(--ease-out-quart);
+  }
+
+  .faq__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .faq__item[open] .faq__icon {
+    background: var(--color-forest-900);
+    border-color: var(--color-forest-900);
+  }
+
+  .faq__item[open] .faq__icon::before,
+  .faq__item[open] .faq__icon::after {
+    background: var(--color-gold-500);
+  }
+
+  .faq__item[open] .faq__icon::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  .faq__item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.5s var(--ease-out-expo),
+      content-visibility 0.5s allow-discrete;
+  }
+
+  .faq__item[open]::details-content {
+    block-size: auto;
+  }
+
+  .faq__a {
+    max-width: 62ch;
+    padding-bottom: 1.6rem;
+    padding-right: 3.75rem;
+    color: color-mix(in oklab, var(--color-forest-900) 82%, transparent);
+  }
+
+  @media (max-width: 559px) {
+    .faq__a {
+      padding-right: 0;
+    }
+  }
+</style>

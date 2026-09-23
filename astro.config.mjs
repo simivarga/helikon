@@ -27,6 +27,7 @@ const SUBSET_BY_RANGE = [
   ['latin-ext', 'U+0100-02BA'],
   ['latin', 'U+0000-00FF'],
 ];
+/** @type {Record<string, string[]>} */
 const NEEDED = {
   // Ukrainian's і ї є ґ all sit in the base cyrillic range, but the hryvnia
   // sign ₴ (U+20B4) is filed under cyrillic-ext and appears in every salt-room
@@ -36,6 +37,7 @@ const NEEDED = {
   en: ['latin'],
 };
 
+/** @returns {import('astro').AstroIntegration} */
 function localeFontPreloads() {
   return {
     name: 'helikon:locale-font-preloads',
@@ -89,6 +91,47 @@ function localeFontPreloads() {
   };
 }
 
+// hreflang is language-only on purpose. `hu-HU` tells Google the Hungarian
+// page is for Hungary, yet the largest Hungarian-speaking audience for a hotel
+// in Transcarpathia lives in Ukraine itself (and in Romania and Slovakia).
+// `hu` covers every Hungarian reader, wherever they are. Must match the
+// hreflang tags Base.astro prints in the page head.
+const HREFLANG = { uk: 'uk', hu: 'hu', en: 'en' };
+
+// x-default is the page for a visitor whose language matches none of the
+// three. English serves a Polish, German or Romanian traveller better than
+// the Ukrainian root page does.
+const X_DEFAULT_LOCALE = 'en';
+
+const IS_PREVIEW = process.env.PUBLIC_PREVIEW === '1';
+
+/**
+ * robots.txt has to name the sitemap by absolute URL, which depends on the
+ * host and base path this build is for. A hand-written file pointed every
+ * preview host at production's sitemap. Preview builds keep `Allow: /` (a
+ * crawler that is blocked never sees the page's noindex) but drop the sitemap
+ * line, so they do not invite crawling.
+ * @returns {import('astro').AstroIntegration}
+ */
+function robotsTxt() {
+  return {
+    name: 'helikon:robots-txt',
+    hooks: {
+      'astro:build:done': async ({ dir, logger }) => {
+        const { writeFile } = await import('node:fs/promises');
+        const { fileURLToPath } = await import('node:url');
+        const { join } = await import('node:path');
+        const sitemap = new URL(`${BASE.replace(/\/+$/, '')}/sitemap-index.xml`, SITE).href;
+        const lines = IS_PREVIEW
+          ? ['# Preview build: every page also carries <meta name="robots" content="noindex, nofollow">.', 'User-agent: *', 'Allow: /']
+          : ['User-agent: *', 'Allow: /', '', `Sitemap: ${sitemap}`];
+        await writeFile(join(fileURLToPath(dir), 'robots.txt'), `${lines.join('\n')}\n`);
+        logger.info(IS_PREVIEW ? 'preview robots.txt (no sitemap line)' : `robots.txt → ${sitemap}`);
+      },
+    },
+  };
+}
+
 export default defineConfig({
   site: SITE,
   base: BASE,
@@ -102,12 +145,19 @@ export default defineConfig({
 
   integrations: [
     sitemap({
-      i18n: {
-        defaultLocale: 'uk',
-        locales: { uk: 'uk-UA', hu: 'hu-HU', en: 'en' },
+      i18n: { defaultLocale: 'uk', locales: HREFLANG },
+      // The integration writes one alternate per locale but no x-default, so
+      // the sitemap and the page head disagreed. Added from the same rule.
+      serialize(item) {
+        const fallback = item.links?.find((l) => l.lang === HREFLANG[X_DEFAULT_LOCALE]);
+        if (fallback && !item.links?.some((l) => l.lang === 'x-default')) {
+          item.links = [...(item.links ?? []), { url: fallback.url, lang: 'x-default' }];
+        }
+        return item;
       },
     }),
     localeFontPreloads(),
+    robotsTxt(),
   ],
 
   image: {
@@ -142,6 +192,15 @@ export default defineConfig({
       fallbacks: ['Georgia', 'ui-serif', 'serif'],
     },
   ],
+
+  // The whole site's CSS is one ~58 kB file (about 10 kB compressed) that
+  // every page needs before first paint. Lighthouse's mobile run measured it
+  // as the only render-blocking request, costing 300-900 ms. Inlining it
+  // removes that round trip, the one that matters most on a phone at the
+  // border with a weak signal.
+  build: {
+    inlineStylesheets: 'always',
+  },
 
   vite: {
     plugins: [tailwindcss()],
